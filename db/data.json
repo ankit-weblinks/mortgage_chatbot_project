@@ -351,61 +351,6 @@
         ]
     },
     {
-      "id": "44444444-1111-4111-1111-444444444444",
-      "lenderId": "11111111-2222-2222-2222-111111111111",
-      "name": "Flex Supreme",
-      "programCode": "FLEX_SUPREME_01_20_2025",
-      "description": "Flex Supreme program overlays and highlights (matrix-driven LTVs/reserves). Updated program rules effective 01-20-2025: includes I/O restrictions, FTHB overlays, cash-out limits and occupancy expansion to include 1-4 unit investment properties per matrix.",
-      "sourceDocument": "FLEX GUIDELINES - NQMF 01 20 2025.pdf",
-      "minLoanAmount": null,
-      "maxLoanAmount": 3000000,
-      "eligibility_matrix_rules": [
-        {
-          "id": "55555555-1111-5111-1111-555555555555",
-          "loanProgramId": "44444444-1111-4111-1111-444444444444",
-          "minFicoScore": 700,
-          "occupancyType": "PRIMARY",
-          "loanPurpose": "PURCHASE",
-          "maxLtv": 75.0,
-          "reservesMonths": null,
-          "notes": "Interest-Only loans allowed only for FICO >= 700 and LTV <= 75% (Flex Supreme overlay). Exact LTV/reserve tiers are in Flex Supreme Matrix — replace placeholder values with matrix entries as needed."
-        },
-        {
-          "id": "66666666-1111-6111-1111-666666666666",
-          "loanProgramId": "44444444-1111-4111-1111-444444444444",
-          "minFicoScore": null,
-          "occupancyType": "PRIMARY",
-          "loanPurpose": "CASH_OUT",
-          "maxLtv": null,
-          "reservesMonths": null,
-          "notes": "Cash-Out rules: <=70% LTV => unlimited cash-out; >70% LTV => max $500,000. Refer to Flex Supreme Matrix for exact numeric LTV bands and reserve requirements. FTHB ineligible for IO and special overlays apply. Declining market LTV reduction = 5% from matrix LTVs. Source: FLEX Guidelines."
-        }
-      ],
-      "guidelines": [
-        {
-          "id": "77777777-1111-7111-1111-777777777777",
-          "loanProgramId": "44444444-1111-4111-1111-444444444444",
-          "category": "I_O_RESTRICTIONS",
-          "content": "Interest-Only (I/O) overlay: Min FICO 700 to qualify for I/O; FTHB ineligible for I/O. Qualify IO using fully-amortizing payment over remainder amortization as defined in product rules.",
-          "sourceReference": "FLEX GUIDELINES - 'FLEX SUPREME – I/O and Matrix overlays'."
-        },
-        {
-          "id": "88888888-1111-8111-1111-888888888888",
-          "loanProgramId": "44444444-1111-4111-1111-444444444444",
-          "category": "CASH_OUT_POLICY",
-          "content": "Max cash-out: <=70% LTV unlimited; >70% LTV capped at $500,000. Minimum 6 months seasoning for cash-out; cash-out not permitted in declining markets. See matrix for exceptions.",
-          "sourceReference": "FLEX GUIDELINES - 'Flex Supreme - Max Cash-Out' and 'Cash-Out Transactions'."
-        },
-        {
-          "id": "99999999-1111-9111-1111-999999999999",
-          "loanProgramId": "44444444-1111-4111-1111-444444444444",
-          "category": "OCCUPANCY",
-          "content": "Occupancy expanded: Primary, Second Home and Investment (1-4 units) allowed under Flex Supreme (subject to matrix and additional overlays).",
-          "sourceReference": "FLEX GUIDELINES - 'Flex Supreme - Occupancy' section."
-        }
-      ]
-    },
-    {
       "id": "44444444-2222-4222-2222-444444444445",
       "lenderId": "11111111-2222-2222-2222-111111111111",
       "name": "Flex Select (Express DU option)",
@@ -453,15 +398,42 @@
       "programCode": "SELECT_ITIN_01_20_2025",
       "description": "Standalone Select ITIN program matrix extracted from Flex Select (requirements and eligible docs updated 01-20-2025).",
       "sourceDocument": "FLEX GUIDELINES - NQMF 01 20 2025.pdf",
-      "minLoanAmount": null,
-      "maxLoanAmount": null,
-      "eligibility_matrix_rules": [],
+      "minLoanAmount": 125000,
+      "maxLoanAmount": 2500000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "ITIN-EMR-740-1",
+          "loanProgramId": "44444444-3333-4333-3333-444444444446",
+          "minFicoScore": 740,
+          "minLoanAmount": null,
+          "maxLoanAmount": 1500000,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 85.0,
+          "reservesMonths": null,
+          "notes": "Select ITIN Primary Full Doc Purchase up to 85% LTV (Full Doc only for max 85% LTV on 1-unit SFR/PUD/TH). Alt Doc lower LTVs — see matrix for alt doc bands.",
+          "sourceReference": "Select ITIN Matrix (Combined Matrices). :contentReference[oaicite:8]{index=8}"
+        },
+        {
+          "id": "ITIN-EMR-720-2",
+          "loanProgramId": "44444444-3333-4333-3333-444444444446",
+          "minFicoScore": 720,
+          "minLoanAmount": 1500000,
+          "maxLoanAmount": 2000000,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "CASH_OUT",
+          "maxLtv": 80.0,
+          "reservesMonths": 6,
+          "notes": "Select ITIN cash-out bands: see matrix for 2.0M–2.5M bands and alt doc differences. 6-month seasoning required for cash-out.",
+          "sourceReference": "Select ITIN Matrix (Combined Matrices). :contentReference[oaicite:9]{index=9}"
+        }
+      ],
       "guidelines": [
         {
           "id": "dddddddd-3333-d333-3333-dddddddddddd",
           "loanProgramId": "44444444-3333-4333-3333-444444444446",
           "category": "ITIN_SPECIFICS",
-          "content": "Select ITIN matrix: ITIN requirements separated from Flex Select; refer to Select ITIN Program Matrix for exact LTVs, docs, and allowable occupancy. (Matrix values to be pulled from All Matrices.)",
+          "content": "Select ITIN matrix: ITIN requirements separated from Flex Select; refer to Select ITIN Program Matrix for exact LTVs, docs, and allowable occupancy. (Matrix values to be pulled from All Matrices.), ITIN borrowers: ITIN must be assigned prior to application; min 2 years consistent ITIN payments reporting; primary borrower should be ITIN borrower. Escrow impounds required. See Select ITIN documentation requirements.",
           "sourceReference": "FLEX GUIDELINES - 'Select - ITIN — Extracted requirements'."
         }
       ]
@@ -511,12 +483,13 @@
         {
           "id": "11112222-5555-1555-5555-111122223333",
           "loanProgramId": "44444444-5555-4555-5555-444444444448",
-          "minFicoScore": null,
+          "minFicoScore": 740,
           "occupancyType": "PRIMARY",
           "loanPurpose": "SECOND_LIEN",
-          "maxLtv": null,
-          "reservesMonths": null,
-          "notes": "Second-lien program: allowed terms 15/20/25/30 years; not assumable; TPO must be approved to deliver second liens. High-cost second liens allowed in limited circumstances with Section 32 disclosure and compliance. See program section for HPML and state-specific rules."
+          "maxLtv": 85.0,
+          "reservesMonths": 6,
+          "notes": "Second-lien program: allowed terms 15/20/25/30 years; not assumable; TPO must be approved to deliver second liens. High-cost second liens allowed in limited circumstances with Section 32 disclosure and compliance. See program section for HPML and state-specific rules.",
+          "sourceReference": "2nd Lien Matrix (Combined Matrices). :contentReference[oaicite:13]{index=13}"
         }
       ],
       "guidelines": [
@@ -658,120 +631,6 @@
       ]
     },
     {
-      "id": "SELECT-ITIN-01-20-2025",
-      "lenderId": "11111111-2222-2222-2222-111111111111",
-      "name": "Select ITIN",
-      "programCode": "SELECT_ITIN_01_20_2025",
-      "description": "Standalone Select ITIN program matrix (separate from Flex Select); full/alt doc differences captured in matrix.",
-      "sourceDocument": "01 20 2025_v1.2_Flex NonQM Combined Matrices.pdf",
-      "minLoanAmount": 125000,
-      "maxLoanAmount": 2500000,
-      "eligibility_matrix_rules": [
-        {
-          "id": "ITIN-EMR-740-1",
-          "loanProgramId": "SELECT-ITIN-01-20-2025",
-          "minFicoScore": 740,
-          "minLoanAmount": null,
-          "maxLoanAmount": 1500000,
-          "occupancyType": "PRIMARY",
-          "loanPurpose": "PURCHASE",
-          "maxLtv": 85.0,
-          "reservesMonths": null,
-          "notes": "Select ITIN Primary Full Doc Purchase up to 85% LTV (Full Doc only for max 85% LTV on 1-unit SFR/PUD/TH). Alt Doc lower LTVs — see matrix for alt doc bands.",
-          "sourceReference": "Select ITIN Matrix (Combined Matrices). :contentReference[oaicite:8]{index=8}"
-        },
-        {
-          "id": "ITIN-EMR-720-2",
-          "loanProgramId": "SELECT-ITIN-01-20-2025",
-          "minFicoScore": 720,
-          "minLoanAmount": 1500000,
-          "maxLoanAmount": 2000000,
-          "occupancyType": "PRIMARY",
-          "loanPurpose": "CASH_OUT",
-          "maxLtv": 80.0,
-          "reservesMonths": 6,
-          "notes": "Select ITIN cash-out bands: see matrix for 2.0M–2.5M bands and alt doc differences. 6-month seasoning required for cash-out.",
-          "sourceReference": "Select ITIN Matrix (Combined Matrices). :contentReference[oaicite:9]{index=9}"
-        }
-      ],
-      "guidelines": [
-        {
-          "id": "ITIN-G-ELIG",
-          "loanProgramId": "SELECT-ITIN-01-20-2025",
-          "category": "ITIN_SPECIFICS",
-          "content": "ITIN borrowers: ITIN must be assigned prior to application; min 2 years consistent ITIN payments reporting; primary borrower should be ITIN borrower. Escrow impounds required. See Select ITIN documentation requirements.",
-          "sourceReference": "Select ITIN Guidelines (Combined Matrices + Guidelines). "
-        }
-      ]
-    },
-    {
-      "id": "DSCR-SUP-01-20-2025",
-      "lenderId": "11111111-2222-2222-2222-111111111111",
-      "name": "DSCR Supreme",
-      "programCode": "DSCR_SUPREME_01_20_2025",
-      "description": "DSCR Supreme matrix (business-purpose investor product). Min DSCR 1.00 (1.25 for first-time investors); max LTVs and cash-out per matrix.",
-      "sourceDocument": "01 20 2025_v1.2_Flex NonQM Combined Matrices.pdf",
-      "minLoanAmount": 150000,
-      "maxLoanAmount": 2000000,
-      "eligibility_matrix_rules": [
-        {
-          "id": "DSCR-EMR-740-1",
-          "loanProgramId": "DSCR-SUP-01-20-2025",
-          "minFicoScore": 740,
-          "minLoanAmount": null,
-          "maxLoanAmount": 2000000,
-          "occupancyType": "INVESTOR",
-          "loanPurpose": "PURCHASE",
-          "dscrValue": 1.00,
-          "maxLtv": 80.0,
-          "reservesMonths": 3,
-          "notes": "DSCR Supreme: 740 band -> purchase LTV 80, cash-out LTV 75. First-time investor DSCR min =1.25. Cash-out max $1,000,000 when >50% LTV; <=50% unlimited. See matrix for exact bands.",
-          "sourceReference": "DSCR Supreme Matrix (Combined Matrices). :contentReference[oaicite:11]{index=11}"
-        }
-      ],
-      "guidelines": [
-        {
-          "id": "DSCR-G-RENT",
-          "loanProgramId": "DSCR-SUP-01-20-2025",
-          "category": "DSCR_HIGHLIGHTS",
-          "content": "Rental Income: Refinance requires property to be leased; DSCR calc = Gross Rental Income / PITIA (or ITIA for IO). Short-term rentals require third-party validation for locality rules. See DSCR section for rental evidence rules.",
-          "sourceReference": "DSCR Supreme Guidelines (Combined Matrices). :contentReference[oaicite:12]{index=12}"
-        }
-      ]
-    },
-    {
-      "id": "2ND-LIEN-01-20-2025",
-      "lenderId": "11111111-2222-2222-2222-111111111111",
-      "name": "Closed End Second Lien",
-      "programCode": "CLOSED_END_SECOND_01_20_2025",
-      "description": "Closed-end second lien matrix (fixed-term second liens). Min $125k max $500k. Manual underwriting only.",
-      "sourceDocument": "01 20 2025_v1.2_Flex NonQM Combined Matrices.pdf",
-      "minLoanAmount": 125000,
-      "maxLoanAmount": 500000,
-      "eligibility_matrix_rules": [
-        {
-          "id": "2ND-EMR-740-PUR",
-          "loanProgramId": "2ND-LIEN-01-20-2025",
-          "minFicoScore": 740,
-          "occupancyType": "PRIMARY",
-          "loanPurpose": "SECOND_LIEN",
-          "maxLtv": 85.0,
-          "reservesMonths": 6,
-          "notes": "Second lien purchase/rate&term allows CLTV up to matrix caps; cash-out CLTV limits vary by primary matrix. Manual underwriting only. Refer to 2nd Lien Matrix for per-score exposures.",
-          "sourceReference": "2nd Lien Matrix (Combined Matrices). :contentReference[oaicite:13]{index=13}"
-        }
-      ],
-      "guidelines": [
-        {
-          "id": "2ND-G-REQUIREMENTS",
-          "loanProgramId": "2ND-LIEN-01-20-2025",
-          "category": "SECOND_LIEN_LIMITS",
-          "content": "Closed-End Second Lien: Fixed amortizing terms 15/20/25/30 years; not assumable; borrower eligibility aligned to primary matrices; cash-out seasoning/interplay rules apply per 2nd Lien Matrix.",
-          "sourceReference": "2nd Lien Matrix & Guidelines (Combined Matrices). :contentReference[oaicite:14]{index=14}"
-        }
-      ]
-    },
-    {
       "id": "ARC-EDGE-DSCR-10-30-2025",
       "lenderId": "11111111-3333-3333-3333-111111111111",
       "name": "Edge DSCR",
@@ -839,7 +698,7 @@
         {
           "id": "EDGE-G-APPRAISAL",
           "loanProgramId": "ARC-EDGE-DSCR-10-30-2025",
-          "category": "APPRAISAL",
+          "category": "APPRAISALS",
           "content": "Appraisals: One appraisal required for loans < $2,000,000; two appraisals required for loans > $2,000,000. For 1-unit properties include Form 1007; for 2-4 units use Form 1025. Collateral review and SSR thresholds per guide.",
           "sourceReference": "Edge & Access DSCR Product Matrix — Appraisal Requirements; Arc Underwriting Guide for collateral reviews. "
         },
@@ -878,7 +737,7 @@
         },
         {
           "id": "ACCESS-720-2000000-PUR",
-          "loanProgramId": "ARC-ACCESS-DSCR-10_30-2025",
+          "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
           "minFicoScore": 720,
           "minDscr": 1.00,
           "maxLoanAmount": 2000000,
@@ -921,7 +780,7 @@
         {
           "id": "ACCESS-G-APPRAISAL",
           "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
-          "category": "APPRAISAL",
+          "category": "APPRAISALS",
           "content": "Appraisal rules: One appraisal for loans < $2M; two appraisals for > $2M; Form 1007 required for 1-unit appraisals; 1025 for 2-4 units. Appraisal Review Product/order when SSR > 2.5 (except where full second appraisal ordered).",
           "sourceReference": "Edge & Access DSCR Product Matrix — Appraisal Requirements; Arc Underwriting Guide. "
         },

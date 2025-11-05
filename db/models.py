@@ -19,11 +19,13 @@ class OccupancyType(enum.Enum):
     PRIMARY = "PRIMARY"
     SECOND_HOME = "SECOND_HOME"
     INVESTMENT = "INVESTMENT"
+    INVESTOR = "INVESTOR"
 
 class LoanPurposeType(enum.Enum):
     PURCHASE = "PURCHASE"
     RATE_TERM = "RATE_TERM"
     CASH_OUT = "CASH_OUT"
+    SECOND_LIEN = "SECOND_LIEN"
 
 class GuidelineCategory(enum.Enum):
     LOAN_PURPOSE = "LOAN_PURPOSE"
@@ -56,6 +58,19 @@ class GuidelineCategory(enum.Enum):
     INCOME_DOCUMENTATION = "INCOME_DOCUMENTATION"
     DTI = "DTI"
     ASSET_UTILIZATION = "ASSET_UTILIZATION"
+    STATE_SPECIFIC = "STATE_SPECIFIC"
+    ESCROWS = "ESCROWS"
+    SECONDARY_FINANCING = "SECONDARY_FINANCING"
+    BORROWER_ELIGIBILITY = "BORROWER_ELIGIBILITY"
+    NON_ARM_LENGTH = "NON_ARM_LENGTH"
+    DELAYED_FINANCING = "DELAYED_FINANCING"
+    LEASE_PURCHASE = "LEASE_PURCHASE"
+    DU_RULES = "DU_RULES"
+    ITIN_SPECIFICS = "ITIN_SPECIFICS"
+    DSCR_HIGHLIGHTS = "DSCR_HIGHLIGHTS"
+    SECOND_LIEN_LIMITS = "SECOND_LIEN_LIMITS"
+    DSCR_MULTI_RULES = "DSCR_MULTI_RULES"
+    DSCR_RULES = "DSCR_RULES"
     MISCELLANEOUS = "MISCELLANEOUS"
 
 # --- Tables ---
@@ -118,16 +133,16 @@ class EligibilityMatrixRule(Base):
     loanProgramId = Column(String, ForeignKey("loan_program.id", ondelete="CASCADE"), nullable=False)
     
     # Inputs
-    minLoanAmount = Column(Numeric, nullable=False)
-    maxLoanAmount = Column(Numeric, nullable=False)
-    minFicoScore = Column(Integer, nullable=False)
+    minLoanAmount = Column(Numeric, nullable=True)
+    maxLoanAmount = Column(Numeric, nullable=True)
+    minFicoScore = Column(Integer, nullable=True)
     maxFicoScore = Column(Integer, nullable=True)
-    occupancyType = Column(SAEnum(OccupancyType), nullable=False)
-    loanPurpose = Column(SAEnum(LoanPurposeType), nullable=False)
+    occupancyType = Column(SAEnum(OccupancyType), nullable=True)
+    loanPurpose = Column(SAEnum(LoanPurposeType), nullable=True)
     dscrValue = Column(String, nullable=True)
     
     # Outputs
-    maxLtv = Column(Numeric, nullable=False)
+    maxLtv = Column(Numeric, nullable=True)
     reservesMonths = Column(Integer, nullable=True)
     notes = Column(Text, nullable=True)
     

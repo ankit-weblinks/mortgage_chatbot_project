@@ -8,7 +8,8 @@ from db.crud import (
     update_conversation_summary
 )
 from db.models import ChatMessageRole
-from core.agent import chain, llm
+from core.tools import llm
+from core.agent import create_agent_executor
 
 async def process_chat_message(
     request: ChatRequest, db: AsyncSession
@@ -26,14 +27,19 @@ async def process_chat_message(
     history_messages = await get_chat_history_messages(db, conversation.id)
     conversation_summary = conversation.summary or "No summary yet."
     
-    # 4. Invoke the agent chain
-    ai_response = await chain.ainvoke({
+    # 4. Create an agent bound to this DB session (formatting the system prompt with the conversation summary)
+    agent_executor = create_agent_executor(db, conversation_summary)
+    ai_response = await agent_executor.ainvoke({
         "conversation_summary": conversation_summary,
         "history": history_messages,
         "input": request.message
     })
-    
-    ai_content = ai_response.content
+
+    # Extract content from response (handle different shapes)
+    if isinstance(ai_response, dict):
+        ai_content = ai_response.get("output") or ai_response.get("text") or ai_response.get("output_text") or str(ai_response)
+    else:
+        ai_content = getattr(ai_response, "content", str(ai_response))
     
     # 5. Save the AI's response
     await add_message_to_conversation(

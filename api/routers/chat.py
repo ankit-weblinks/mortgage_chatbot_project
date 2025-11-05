@@ -52,7 +52,8 @@ async def handle_chat_message_stream(
         full_ai_content = ""
         try:
             # Create an agent executor bound to this request's DB session
-            agent_executor = create_agent_executor(db)
+            # and format the system prompt with the conversation summary
+            agent_executor = create_agent_executor(db, conversation_summary)
 
             # Call the agent (non-streaming) to get the final answer
             ai_response = await agent_executor.ainvoke({

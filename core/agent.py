@@ -1,8 +1,8 @@
 from functools import partial
 from sqlalchemy.ext.asyncio import AsyncSession
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.tools import Tool
-from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.tools import Tool
+from langchain.agents import create_agent
 from core.tools import (
     llm,  # Import the llm from tools.py
     get_all_lenders,
@@ -40,10 +40,14 @@ Previous conversation summary:
 {conversation_summary}
 """
 
-def create_agent_executor(db: AsyncSession) -> AgentExecutor:
+def create_agent_executor(db: AsyncSession, conversation_summary: str = "No summary yet."):
     """
     Factory function to create the agent executor, binding the 
     database session to the tools.
+    The system prompt will be formatted with `conversation_summary` so the model
+    sees the current conversation context instead of a literal placeholder.
+
+    Returns a compiled agent graph (a Runnable) with methods `ainvoke`/`astream`.
     """
     
     # 1. Create the list of tools, using functools.partial to inject the db session
@@ -89,15 +93,18 @@ def create_agent_executor(db: AsyncSession) -> AgentExecutor:
             MessagesPlaceholder(variable_name="agent_scratchpad"),
         ]
     )
-    
-    # 3. Create the agent
-    agent = create_tool_calling_agent(llm, tools, prompt)
-    
-    # 4. Create the agent executor
-    executor = AgentExecutor(
-        agent=agent, 
-        tools=tools, 
-        verbose=True  # Set to True for debugging agent steps
+
+    # Format the system prompt with the per-request conversation summary
+    formatted_system_prompt = SYSTEM_PROMPT.format(conversation_summary=conversation_summary)
+
+    # 3. Create the agent graph using langchain's create_agent
+    #    The `create_agent` function compiles a StateGraph that implements the
+    #    Runnable interface (invoke/ainvoke/stream/astream).
+    agent_graph = create_agent(
+        model=llm,
+        tools=tools,
+        system_prompt=formatted_system_prompt,
+        debug=True,
     )
-    
-    return executor
+
+    return agent_graph

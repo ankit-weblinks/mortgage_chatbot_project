@@ -1,0 +1,12 @@
+# requirements.txt
+fastapi
+uvicorn[standard]
+sqlalchemy[asyncio]
+asyncpg
+alembic
+
+langchain
+langchain-groq
+groq
+
+pydantic-settings

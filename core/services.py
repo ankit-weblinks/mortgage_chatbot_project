@@ -47,7 +47,7 @@ async def process_chat_message(
     return ChatResponse(response=ai_content, conversation_id=conversation.id)
 
 
-async def generate_and_update_summary(db: AsyncSession, conversation_id: str, llm: ChatGroq):
+async def generate_and_update_summary(db: AsyncSession, conversation_id: str, llm):
     """Generates a new summary for the conversation."""
     recent_messages = await get_recent_messages(db, conversation_id, limit=6)
     

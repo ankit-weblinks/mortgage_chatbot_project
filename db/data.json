@@ -1,0 +1,945 @@
+{
+  "lender": [
+    {
+        "id": "11111111-1111-1111-1111-111111111111",
+        "name": "Champions Funding, LLC"
+    },
+    {
+        "id": "11111111-2222-2222-2222-111111111111",
+        "name": "N QM FUNDING"
+    },
+    {
+        "id": "11111111-3333-3333-3333-111111111111",
+        "name": "ARC Home"
+    }
+  ],
+  "loan_programs": [
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "lenderId": "11111111-1111-1111-1111-111111111111",
+      "name": "Super Jumbo",
+      "programCode": "SUPER_JUMBO_01_21_2025",
+      "description": "Super Jumbo underwriting guidelines for primary residence high-value loans; strict underwriting, minimum FICO 720, max DTI 38%, asset utilization rules, reserves and cash-out limits documented. (Extracted from Super Jumbo Guidelines 01-21-2025.pdf)",
+      "sourceDocument": "Super Jumbo Guidelines 01-21-2025.pdf",
+      "minLoanAmount": 3000000,
+      "maxLoanAmount": 5000000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "33333333-3333-3333-3333-333333333333",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "minLoanAmount": 3000000,
+          "maxLoanAmount": 3999999.99,
+          "minFicoScore": 720,
+          "maxFicoScore": null,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "dscrValue": null,
+          "maxLtv": 80.0,
+          "reservesMonths": 12,
+          "notes": "Loans $3.0M–$4.0M: reserves 12 months PITIA per Super Jumbo guidelines. Max DTI 38%. Credit event seasoning > 48 months required."
+        },
+        {
+          "id": "44444444-4444-4444-4444-444444444444",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "minLoanAmount": 4000000,
+          "maxLoanAmount": 5000000,
+          "minFicoScore": 720,
+          "maxFicoScore": null,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "dscrValue": null,
+          "maxLtv": 75.0,
+          "reservesMonths": 18,
+          "notes": "Loans $4.0M–$5.0M: reserves 18 months PITIA per Super Jumbo guidelines. Cash-out proceeds may not be used to meet reserves."
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "55555555-5555-5555-5555-555555555555",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "CREDIT_EVENT_SEASONING",
+          "content": "Credit Event Seasoning: greater than 48 months required for Super Jumbo loans.",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'CREDIT EVENT SEASONING' section."
+        },
+        {
+          "id": "66666666-6666-6666-6666-666666666666",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "DTI",
+          "content": "Maximum DTI: 38% for Super Jumbo loans (Primary Residence only).",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'MAX DTI' and 'OCCUPANCY' sections."
+        },
+        {
+          "id": "77777777-7777-7777-7777-777777777777",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "RESERVES",
+          "content": "Reserves requirements: $3.0M–$4.0M loans require 12 months PITIA; $4.0M–$5.0M loans require 18 months PITIA. Cash-out proceeds may not be used to meet reserves.",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'RESERVES' section."
+        },
+        {
+          "id": "88888888-8888-8888-8888-888888888888",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "PROPERTY_TYPES",
+          "content": "Allowed property types: 1-unit SFD/PUD/Condo (warrantable/non-warrantable). Lot size max 2 acres. Farms/rural properties not permitted.",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'PROPERTY TYPES' section."
+        },
+        {
+          "id": "99999999-9999-9999-9999-999999999999",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "GIFT_FUNDS",
+          "content": "Gift funds permitted on purchase transactions after 20% minimum borrower contribution and all reserves/prepaids/closing costs met from borrower's own funds.",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'GIFT FUNDS' section."
+        },
+        {
+          "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "ASSET_UTILIZATION",
+          "content": "Asset utilization allowed as supplemental income when DTI prior to use of assets is <= 50%. Calculation: qualified assets (sourced & seasoned 3 months) divided by 84 months.",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'ASSET UTILIZATION AND CALCULATION' section."
+        },
+        {
+          "id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "CASH_OUT",
+          "content": "Maximum cash-out (cash in hand): $1,500,000. Cash-out seasoning and ownership rules apply (standard 6-month seasoning unless delayed financing).",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'CASH OUT LIMITS' and 'DELAYED FINANCING' sections."
+        },
+        {
+          "id": "cccccccc-cccc-cccc-cccc-cccccccccccc",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "HOUSING_HISTORY",
+          "content": "Housing history: 0x30x24 (no 30-day delinquencies in last 24 months). Borrowers who own primary residence free and clear are considered to have acceptable housing history.",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'HOUSING HISTORY' section."
+        },
+        {
+          "id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+          "loanProgramId": "22222222-2222-2222-2222-222222222222",
+          "category": "MISCELLANEOUS",
+          "content": "Minimum credit score requirement: 720 for all borrowers on the loan. Zero tolerance policy on fraud; ATR and TILA compliance required.",
+          "sourceReference": "Super Jumbo Guidelines 01-21-2025.pdf — 'MINIMUM CREDIT SCORE REQUIREMENTS' and 'Zero Tolerance Fraud' sections."
+        }
+      ]
+    },
+    {
+      "id": "22222222-bbbb-4bbb-bbbb-222222222222",
+      "lenderId": "11111111-1111-1111-1111-111111111111",
+      "name": "Ally | Consumer - No Ratio",
+      "programCode": "ALLY_NO_RATIO_01_21_2025",
+      "description": "Ally Consumer - No Ratio (No Income & No Employment) underwriting guidelines — CDFI-exempt program for underbanked / underserved borrowers. (Extracted from Champions Funding LLC - Ally No Ratio Guidelines.pdf)",
+      "sourceDocument": "Champions Funding LLC - Ally No Ratio Guidelines.pdf",
+      "minLoanAmount": 100000,
+      "maxLoanAmount": 2000000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "33333333-cccc-4ccc-cccc-333333333333",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "minLoanAmount": 100000,
+          "maxLoanAmount": 2000000,
+          "minFicoScore": 660,
+          "maxFicoScore": null,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "dscrValue": null,
+          "maxLtv": 75.0,
+          "reservesMonths": null,
+          "notes": "Max LTV values referenced in program matrices — placeholder 75% used here. Qualify at Promissory Note rate; Impound required; see program matrices for exact LTV per product. Source: Ally No Ratio guidelines."
+        },
+        {
+          "id": "44444444-dddd-4ddd-dddd-444444444444",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "minLoanAmount": 100000,
+          "maxLoanAmount": 2000000,
+          "minFicoScore": 660,
+          "maxFicoScore": null,
+          "occupancyType": "SECOND_HOME",
+          "loanPurpose": "PURCHASE",
+          "dscrValue": null,
+          "maxLtv": 75.0,
+          "reservesMonths": null,
+          "notes": "Second-home LTV placeholder 75%. Actual matrix values to replace when available. Impound required; no prepayment penalty."
+        },
+        {
+          "id": "55555555-eeee-4eee-eeee-555555555555",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "minLoanAmount": 100000,
+          "maxLoanAmount": 2000000,
+          "minFicoScore": 660,
+          "maxFicoScore": null,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "CASH_OUT",
+          "dscrValue": null,
+          "maxLtv": 70.0,
+          "reservesMonths": 4,
+          "notes": "Cash-out rules: borrower must have 4 months reserves from own funds; remaining reserves may be satisfied with cash-out proceeds per guidelines. Cash-out seasoning rules apply (no <6 months unless inheritance, etc.). Placeholder LTV 70% - replace with matrix values."
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "66666666-ffff-4fff-ffff-666666666666",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "LOAN_AMOUNTS",
+          "content": "Minimum loan amount $100,000. Maximum loan amount $2,000,000.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "77777777-0000-4000-0000-777777777777",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "PREPAYMENT_PENALTY",
+          "content": "No prepayment penalty for Ally No Ratio program.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "88888888-1111-4111-1111-888888888888",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "OCCUPANCY",
+          "content": "Eligible occupancy: Primary residences and Second Homes (must be occupied by borrower some portion of year). Investment properties are ineligible under this program.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "99999999-2222-4222-2222-999999999999",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "INELIGIBLE_STATES",
+          "content": "Ineligible states: Alabama, Alaska, Arkansas, Kansas, Louisiana, Massachusetts, Missouri, Mississippi, Nebraska, New Hampshire, New Mexico, New York, North Dakota, Pennsylvania, South Dakota, West Virginia, Wyoming. CDFI exception not honored in: District of Columbia, Maryland, Maine, Nevada, Pennsylvania, Washington.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "aaaaaaaa-3333-4333-3333-aaaaaaaaaaaa",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "APPRAISALS",
+          "content": "Second appraisal required when loan amount >= $1,500,000. Desk appraisal required for loan amounts < $1,500,000; if desk appraisal is >10% below appraised value, field review or second appraisal required. Appraisals must be <120 days old; original appraisal cannot be older than 365 days as of Promissory Note date.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "bbbbbbbb-4444-4444-4444-bbbbbbbbbbbb",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "APPRAISALS",
+          "content": "Declining market adjustments: Purchase/Rate & Term — 10% reduction to max LTV; Cash Out — 15% reduction to max LTV.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "cccccccc-5555-4555-5555-cccccccccccc",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "TRADELINES",
+          "content": "Tradeline requirement: 2 tradelines reporting for 12+ months OR 1 tradeline reporting for 24+ months; all with activity in last 90 days. First-time homebuyers allowed to apply recent 12-month VOR towards tradeline requirement.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "dddddddd-6666-4666-6666-dddddddddddd",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "CREDIT_EVENT_SEASONING",
+          "content": "Foreclosure: 7-year waiting period measured from completion date to disbursement. Bankruptcy: No bankruptcy in previous 4 years (all types) measured from discharge date to disbursement. No short sale or Deed-in-Lieu in the previous 4 years.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "eeeeeeee-7777-4777-7777-eeeeeeeeeeee",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "RESERVES",
+          "content": "Cash-out refinance: borrower must have 4 months of reserves from their own funds; remaining reserve requirement may be satisfied with cash-out proceeds. All asset statements must be dated within 90 days of the Promissory Note date. Gift funds may not be used for reserves.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "ffffffff-8888-4888-8888-ffffffffffff",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "GIFT_FUNDS",
+          "content": "Gift funds acceptable for down payment and closing costs (gift letter required). Gifts MAY NOT be used to meet reserve requirements. Gifts of equity are not permitted.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "11111111-9999-4999-9999-111111111111",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "SELLER_CONCESSIONS",
+          "content": "Seller credit not to exceed 6% on purchase transactions.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "22222222-aaaa-4aaa-aaaa-222222222222",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "PROPERTY_TYPES",
+          "content": "Eligible properties: Primary residences and second homes; 1-4 unit residential; condos (Fannie Mae warrantable) and site condos allowed; acreage limited to 10 acres max. Ineligible properties: investment, vacant land, manufactured/mobile, coop shares, assisted living facilities, houseboats, acreage >10 acres, properties used for cultivation/distribution/manufacture/sale of marijuana, non-warrantable condotels, C5/C6 condition ratings.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "33333333-bbbb-4bbb-bbbb-333333333333",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "MISCELLANEOUS",
+          "content": "CDFI exemption: Champions Funding LLC is certified as a CDFI (Cert. #171CE014596). Loans originated while certified are exempt from Ability-to-Repay (ATR) requirements per 12 C.F.R. 1805.104. Qualifying rate rules: Fixed loans qualified at promissory note rate; certain ARMs qualify at note or fully-indexed rate per schedule.",
+          "sourceReference": "Champions Funding LLC - Ally No Ratio Guidelines.pdf"
+        },
+        {
+          "id": "33333333-bbbb-4bbb-cccc-333333333333",
+          "loanProgramId": "22222222-bbbb-4bbb-bbbb-222222222222",
+          "category": "STATE_SPECIFIC",
+          "content": "Colorado requires LO Reasonable Inquiry Attestation and HUD Counseling Certification (CHAC). Iowa min loan $125,000; North Carolina min loan $300,000; Texas 50(a)(6) not permitted.",
+          "sourceReference": "All Matrices.pdf — 'State Specific Restrictions'"
+        }
+
+      ]
+    },
+    {
+        "id": "33333333-aaaa-4aaa-aaaa-333333333333",
+        "lenderId": "11111111-1111-1111-1111-111111111111",
+        "name": "Activator / Accelerator / Ambassador / ITIN",
+        "programCode": "MULTI_PROGRAM_01_21_2025",
+        "description": "Champions Funding multi-program Non-QM set — includes Activator (Full/Alt Doc), Accelerator (DSCR), Ambassador (Foreign National), and ITIN program options as described in Guidelines 01-21-2025.",
+        "sourceDocument": "Champions Funding LLC - Guidelines 01-21-2025.pdf",
+        "minLoanAmount": 100000,
+        "maxLoanAmount": 3000000,
+        "eligibility_matrix_rules": [
+            {
+                "id": "66666666-eeee-4eee-eeee-555555555555",
+                "loanProgramId": "33333333-aaaa-4aaa-aaaa-333333333333",
+                "minFicoScore": 720,
+                "occupancyType": "PRIMARY",
+                "loanPurpose": "PURCHASE",
+                "maxLtv": 80,
+                "reservesMonths": 12,
+                "notes": "Per Master Champs Matrices 01-21-2025 — 720+ FICO, 80% LTV Purchase / 70% Cash-out, 12-month reserves."
+            },
+            {
+                "id": "77777777-eeee-4eee-eeee-555555555555",
+                "loanProgramId": "33333333-aaaa-4aaa-aaaa-333333333333",
+                "minFicoScore": 680,
+                "occupancyType": "PRIMARY",
+                "loanPurpose": "CASH_OUT",
+                "maxLtv": 65,
+                "reservesMonths": 9,
+                "notes": "Per All Matrices PDF — 680 FICO tier, 65% max LTV, 9-month reserves requirement."
+            }
+        ],
+        "guidelines": [
+            {
+                "id": "33333333-bbbb-4bbb-dddd-333333333333",
+                "loanProgramId": "33333333-aaaa-4aaa-aaaa-333333333333",
+                "category": "ESCROWS",
+                "content": "Escrows required for HPML and Flood Insurance; optional otherwise based on program matrices.",
+                "sourceReference": "Champions Funding LLC - Guidelines 01-21-2025.pdf — 'ESCROWS | IMPOUND ACCOUNTS'"
+            },
+            {
+                "id": "33333333-bbbb-4bbb-eeee-333333333333",
+                "loanProgramId": "33333333-aaaa-4aaa-aaaa-333333333333",
+                "category": "SECONDARY_FINANCING",
+                "content": "Secondary financing permitted up to combined LTV limits; must be institutional, no seller carrybacks; full subordination docs required.",
+                "sourceReference": "Champions Funding LLC - Guidelines 01-21-2025.pdf — 'SECONDARY FINANCING'"
+            },
+            {
+                "id": "33333333-bbbb-4bbb-ffff-333333333333",
+                "loanProgramId": "33333333-aaaa-4aaa-aaaa-333333333333",
+                "category": "BORROWER_ELIGIBILITY",
+                "content": "Eligible borrower types include US Citizens, Permanent Residents, Non-Permanent Residents, ITIN, and Foreign Nationals. Ineligible borrowers include those with diplomatic immunity or on OFAC lists.",
+                "sourceReference": "Champions Funding LLC - Guidelines 01-21-2025.pdf — 'BORROWER ELIGIBILITY'"
+            },
+            {
+                "id": "33333333-bbbb-4bbb-gggg-333333333333",
+                "loanProgramId": "33333333-aaaa-4aaa-aaaa-333333333333",
+                "category": "NON_ARM_LENGTH",
+                "content": "Non-arm’s length transactions must be disclosed and justified; family sales, renter purchases, or related-party deals require proof of payments and explanation.",
+                "sourceReference": "Champions Funding LLC - Guidelines 01-21-2025.pdf — 'NON-ARM’S LENGTH AND INTERESTED PARTY TRANSACTIONS'"
+            },
+            {
+                "id": "33333333-bbbb-4bbb-hhhh-333333333333",
+                "loanProgramId": "33333333-aaaa-4aaa-aaaa-333333333333",
+                "category": "DELAYED_FINANCING",
+                "content": "Cash-out allowed on properties owned <6 months when purchased with cash; must document original funds and confirm no prior liens.",
+                "sourceReference": "Champions Funding LLC - Guidelines 01-21-2025.pdf — 'DELAYED FINANCING'"
+            },
+            {
+                "id": "33333333-bbbb-4bbb-iiii-333333333333",
+                "loanProgramId": "33333333-aaaa-4aaa-aaaa-333333333333",
+                "category": "LEASE_PURCHASE",
+                "content": "Lease with Purchase Option allowed with verified 12-month rent history and earnest deposit ≥3%. Appraised value used for LTV when >12 months occupancy.",
+                "sourceReference": "Champions Funding LLC - Guidelines 01-21-2025.pdf — 'LEASE WITH PURCHASE OPTION'"
+            }
+        ]
+    },
+    {
+      "id": "44444444-1111-4111-1111-444444444444",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "Flex Supreme",
+      "programCode": "FLEX_SUPREME_01_20_2025",
+      "description": "Flex Supreme program overlays and highlights (matrix-driven LTVs/reserves). Updated program rules effective 01-20-2025: includes I/O restrictions, FTHB overlays, cash-out limits and occupancy expansion to include 1-4 unit investment properties per matrix.",
+      "sourceDocument": "FLEX GUIDELINES - NQMF 01 20 2025.pdf",
+      "minLoanAmount": null,
+      "maxLoanAmount": 3000000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "55555555-1111-5111-1111-555555555555",
+          "loanProgramId": "44444444-1111-4111-1111-444444444444",
+          "minFicoScore": 700,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 75.0,
+          "reservesMonths": null,
+          "notes": "Interest-Only loans allowed only for FICO >= 700 and LTV <= 75% (Flex Supreme overlay). Exact LTV/reserve tiers are in Flex Supreme Matrix — replace placeholder values with matrix entries as needed."
+        },
+        {
+          "id": "66666666-1111-6111-1111-666666666666",
+          "loanProgramId": "44444444-1111-4111-1111-444444444444",
+          "minFicoScore": null,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "CASH_OUT",
+          "maxLtv": null,
+          "reservesMonths": null,
+          "notes": "Cash-Out rules: <=70% LTV => unlimited cash-out; >70% LTV => max $500,000. Refer to Flex Supreme Matrix for exact numeric LTV bands and reserve requirements. FTHB ineligible for IO and special overlays apply. Declining market LTV reduction = 5% from matrix LTVs. Source: FLEX Guidelines."
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "77777777-1111-7111-1111-777777777777",
+          "loanProgramId": "44444444-1111-4111-1111-444444444444",
+          "category": "I_O_RESTRICTIONS",
+          "content": "Interest-Only (I/O) overlay: Min FICO 700 to qualify for I/O; FTHB ineligible for I/O. Qualify IO using fully-amortizing payment over remainder amortization as defined in product rules.",
+          "sourceReference": "FLEX GUIDELINES - 'FLEX SUPREME – I/O and Matrix overlays'."
+        },
+        {
+          "id": "88888888-1111-8111-1111-888888888888",
+          "loanProgramId": "44444444-1111-4111-1111-444444444444",
+          "category": "CASH_OUT_POLICY",
+          "content": "Max cash-out: <=70% LTV unlimited; >70% LTV capped at $500,000. Minimum 6 months seasoning for cash-out; cash-out not permitted in declining markets. See matrix for exceptions.",
+          "sourceReference": "FLEX GUIDELINES - 'Flex Supreme - Max Cash-Out' and 'Cash-Out Transactions'."
+        },
+        {
+          "id": "99999999-1111-9111-1111-999999999999",
+          "loanProgramId": "44444444-1111-4111-1111-444444444444",
+          "category": "OCCUPANCY",
+          "content": "Occupancy expanded: Primary, Second Home and Investment (1-4 units) allowed under Flex Supreme (subject to matrix and additional overlays).",
+          "sourceReference": "FLEX GUIDELINES - 'Flex Supreme - Occupancy' section."
+        }
+      ]
+    },
+    {
+      "id": "44444444-2222-4222-2222-444444444445",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "Flex Select (Express DU option)",
+      "programCode": "FLEX_SELECT_EXPRESS_DU_01_20_2025",
+      "description": "Flex Select program including Express DU (AUS) option. DU-specific overlays: max DTI, DU eligible findings, non-occupant co-borrower rules, and DU reserve matrix references.",
+      "sourceDocument": "FLEX GUIDELINES - NQMF 01 20 2025.pdf",
+      "minLoanAmount": null,
+      "maxLoanAmount": null,
+      "eligibility_matrix_rules": [
+        {
+          "id": "aaaaaaaa-2222-a222-2222-aaaaaaaaaaaa",
+          "loanProgramId": "44444444-2222-4222-2222-444444444445",
+          "minFicoScore": null,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": null,
+          "reservesMonths": null,
+          "notes": "Express DU: Max DTI = 50%. DU findings limited to Approve/Eligible and Approve/Ineligible (ineligible only for loan size/LTV/features, not credit events). Appraisal waiver not eligible; appraisal/review products required. See Flex Select Matrix for precise LTVs/reserves."
+        },
+        {
+          "id": "bbbbbbbb-2222-b222-2222-bbbbbbbbbbbb",
+          "loanProgramId": "44444444-2222-4222-2222-444444444445",
+          "minFicoScore": null,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 90.0,
+          "reservesMonths": null,
+          "notes": "Non-occupant co-borrower (DU) rules: allowed for Primary occupancy only; max 90% LTV; blended ratios permitted to max 50% DTI; max loan amount for non-occupant co-borrower scenarios = $1,000,000. Use primary wage earner credit score for qualifying."
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "cccccccc-2222-c222-2222-cccccccccccc",
+          "loanProgramId": "44444444-2222-4222-2222-444444444445",
+          "category": "DU_RULES",
+          "content": "Express DU / AUS rules: DU findings must be Approve/Eligible or Approve/Ineligible per guidelines. Extenuating circumstance overrides not permitted. Housing history 0x30x12; appraisal waiver not eligible; all files require appraisal +/- review or 2 appraisals depending on loan amount.",
+          "sourceReference": "FLEX GUIDELINES - 'FLEX SELECT EXPRESS DU OPTION'."
+        }
+      ]
+    },
+    {
+      "id": "44444444-3333-4333-3333-444444444446",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "Select ITIN",
+      "programCode": "SELECT_ITIN_01_20_2025",
+      "description": "Standalone Select ITIN program matrix extracted from Flex Select (requirements and eligible docs updated 01-20-2025).",
+      "sourceDocument": "FLEX GUIDELINES - NQMF 01 20 2025.pdf",
+      "minLoanAmount": null,
+      "maxLoanAmount": null,
+      "eligibility_matrix_rules": [],
+      "guidelines": [
+        {
+          "id": "dddddddd-3333-d333-3333-dddddddddddd",
+          "loanProgramId": "44444444-3333-4333-3333-444444444446",
+          "category": "ITIN_SPECIFICS",
+          "content": "Select ITIN matrix: ITIN requirements separated from Flex Select; refer to Select ITIN Program Matrix for exact LTVs, docs, and allowable occupancy. (Matrix values to be pulled from All Matrices.)",
+          "sourceReference": "FLEX GUIDELINES - 'Select - ITIN — Extracted requirements'."
+        }
+      ]
+    },
+    {
+      "id": "44444444-4444-4444-4444-444444444447",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "DSCR Supreme",
+      "programCode": "DSCR_SUPREME_01_20_2025",
+      "description": "New DSCR Supreme program (competitively priced DSCR product for qualified investors) — highlights and overlays included; matrix defines LTV/reserves.",
+      "sourceDocument": "FLEX GUIDELINES - NQMF 01 20 2025.pdf",
+      "minLoanAmount": 150000,
+      "maxLoanAmount": 2000000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "eeeeeeee-4444-e444-4444-eeeeeeeeeeee",
+          "loanProgramId": "44444444-4444-4444-4444-444444444447",
+          "minFicoScore": null,
+          "occupancyType": "INVESTOR",
+          "loanPurpose": "PURCHASE",
+          "dscrValue": 1.00,
+          "maxLtv": 80.0,
+          "reservesMonths": null,
+          "notes": "DSCR Supreme: Min DSCR 1.00 (first time investor min DSCR 1.25). Max LTV per DSCR Matrix = 80% highlighted; max cash-out $1,000,000 (>=6 months seasoning), reserves: <=$500k => 3 months; >$500k => 6 months. Replace reserves/LTV with matrix exact values."
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "ffffffff-4444-f444-4444-ffffffffffff",
+          "loanProgramId": "44444444-4444-4444-4444-444444444447",
+          "category": "DSCR_HIGHLIGHTS",
+          "content": "DSCR Supreme highlights: DSCR min 1.00; first time investor DSCR min 1.25; housing history 0x30x12; max cash-out $1,000,000 with 6+ months seasoning; reserves per program matrix.",
+          "sourceReference": "FLEX GUIDELINES - 'DSCR SUPREME — Program Highlights'."
+        }
+      ]
+    },
+    {
+      "id": "44444444-5555-4555-5555-444444444448",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "Closed End Second Lien",
+      "programCode": "CLOSED_END_SECOND_01_20_2025",
+      "description": "Closed End 2nd Lien program rules (terms, amounts, ineligible thresholds and high-cost thresholds).",
+      "sourceDocument": "FLEX GUIDELINES - NQMF 01 20 2025.pdf",
+      "minLoanAmount": 125000,
+      "maxLoanAmount": 500000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "11112222-5555-1555-5555-111122223333",
+          "loanProgramId": "44444444-5555-4555-5555-444444444448",
+          "minFicoScore": null,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "SECOND_LIEN",
+          "maxLtv": null,
+          "reservesMonths": null,
+          "notes": "Second-lien program: allowed terms 15/20/25/30 years; not assumable; TPO must be approved to deliver second liens. High-cost second liens allowed in limited circumstances with Section 32 disclosure and compliance. See program section for HPML and state-specific rules."
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "22223333-5555-2555-5555-222233334444",
+          "loanProgramId": "44444444-5555-4555-5555-444444444448",
+          "category": "SECOND_LIEN_LIMITS",
+          "content": "Closed End Second Lien highlights: Min loan $125k; Max loan $500k; Primary and Second Homes allowed; Simultaneous second liens allowed when HCLTV <= matrix caps (most restrictive of 1st/2nd lien matrices).",
+          "sourceReference": "FLEX GUIDELINES - 'CLOSED END SECOND LIEN PROGRAM'."
+        }
+      ]
+    },
+    {
+      "id": "44444444-6666-4666-6666-444444444449",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "DSCR Multi & Mixed",
+      "programCode": "DSCR_MULTI_MIXED_01_20_2025",
+      "description": "DSCR Multi & Mixed (formerly DSCR 5-10 units residential & 2-8 mixed-use) — updated matrix and product rules.",
+      "sourceDocument": "FLEX GUIDELINES - NQMF 01 20 2025.pdf",
+      "minLoanAmount": null,
+      "maxLoanAmount": null,
+      "eligibility_matrix_rules": [],
+      "guidelines": [
+        {
+          "id": "33334444-6666-3666-6666-333344445555",
+          "loanProgramId": "44444444-6666-4666-6666-444444444449",
+          "category": "DSCR_MULTI_RULES",
+          "content": "DSCR Multi & Mixed: Property rental income documentation, investor experience requirement, housing history and appraisal requirements have program-specific rules (see DSCR Multi & Mixed section and program matrix).",
+          "sourceReference": "FLEX GUIDELINES - 'DSCR MULTI & MIXED' sections."
+        }
+      ]
+    },
+    {
+      "id": "FS-0001-01-20-2025",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "Flex Supreme",
+      "programCode": "FLEX_SUPREME_01_20_2025",
+      "description": "Flex Supreme program matrix and overlays (Primary / Second Home / Investment) — per Combined Matrices 01-20-2025.",
+      "sourceDocument": "01 20 2025_v1.2_Flex NonQM Combined Matrices.pdf",
+      "minLoanAmount": 100000,
+      "maxLoanAmount": 3000000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "FS-EMR-1",
+          "loanProgramId": "FS-0001-01-20-2025",
+          "minFicoScore": 740,
+          "minLoanAmount": null,
+          "maxLoanAmount": 2500000,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 80.0,
+          "reservesMonths": 3,
+          "notes": "Flex Supreme Primary: 740 / max loan 2,500,000 => Purchase LTV 80, Cash-Out 65. See matrix for other bands and 3/2/1k amounts.",
+          "sourceReference": "Flex Supreme Matrix (Combined Matrices PDF)."
+        },
+        {
+          "id": "FS-EMR-2",
+          "loanProgramId": "FS-0001-01-20-2025",
+          "minFicoScore": 700,
+          "minLoanAmount": 2000000,
+          "maxLoanAmount": 2500000,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 75.0,
+          "reservesMonths": 6,
+          "notes": "700 band example: 2,000,000 -> Purchase LTV 80 (see full matrix). FTHB overlays: max DTI 43% and I/O not permitted for FTHB. Declining market LTV -5%.",
+          "sourceReference": "Flex Supreme Matrix (Combined Matrices PDF)."
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "FS-G-RESERVES",
+          "loanProgramId": "FS-0001-01-20-2025",
+          "category": "RESERVES",
+          "content": "Reserves: <= $500,000 = 3 months; >$500k–$1.5M = 6 months; >$1.5M–$2.5M = 9 months; >$2.5M–$3.0M = 12 months. Cash-out proceeds may be used to satisfy reserves (Flex Supreme matrix rules).",
+          "sourceReference": "Flex Supreme Matrix — reserves table. :contentReference[oaicite:2]{index=2}"
+        },
+        {
+          "id": "FS-G-CASHOUT",
+          "loanProgramId": "FS-0001-01-20-2025",
+          "category": "CASH_OUT",
+          "content": "Cash-out: min 6 months seasoning. If LTV <= 70% = unlimited cash-in; if LTV > 70% = max $500,000. Cash-Out not permitted in Declining Markets.",
+          "sourceReference": "Flex Supreme Matrix — Cash-Out rules. :contentReference[oaicite:3]{index=3}"
+        }
+      ]
+    },
+    {
+      "id": "FX-SELECT-DC-01-20-2025",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "Flex Select (Delegated Correspondent)",
+      "programCode": "FLEX_SELECT_DC_01_20_2025",
+      "description": "Flex Select Delegated Correspondent matrix (includes wider property types: non-warrantable condos, manufactured housing, condotels — with specific limits).",
+      "sourceDocument": "01 20 2025_v1.2_Flex NonQM Combined Matrices.pdf",
+      "minLoanAmount": 125000,
+      "maxLoanAmount": 3500000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "FS-SEL-EMR-760-1",
+          "loanProgramId": "FX-SELECT-DC-01-20-2025",
+          "minFicoScore": 760,
+          "minLoanAmount": null,
+          "maxLoanAmount": 2000000,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 90.0,
+          "reservesMonths": null,
+          "notes": "Flex Select delegated: 760 band -> Purchase LTV up to 90% for OO (per matrix). Condos allowed (warrantable/non-warrantable) — see Condo LTV exceptions.",
+          "sourceReference": "Flex Select Matrix (Delegated) — score band rows. :contentReference[oaicite:4]{index=4}"
+        },
+        {
+          "id": "FS-SEL-EMR-700-1",
+          "loanProgramId": "FX-SELECT-DC-01-20-2025",
+          "minFicoScore": 700,
+          "minLoanAmount": 150000,
+          "maxLoanAmount": 2500000,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 85.0,
+          "reservesMonths": null,
+          "notes": "700 band example: Purchase LTV 85% on lower loan amounts. LTV reductions apply for certain loan sizes and documentation types. See matrix for full banding.",
+          "sourceReference": "Flex Select Matrix (Delegated) — score band rows. :contentReference[oaicite:5]{index=5}"
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "FS-SEL-G-DU",
+          "loanProgramId": "FX-SELECT-DC-01-20-2025",
+          "category": "DU_RULES",
+          "content": "Express DU (AUS) allowed ONLY under Flex Select; eligible findings Approve/Eligible and Approve/Ineligible. Max DTI 50% (50% DU limit). Non-occupant co-borrower rules: blend ratios up to 50% DTI, max loan amount for non-occupant scenarios = $1,000,000.",
+          "sourceReference": "Flex Select / Express DU rules. :contentReference[oaicite:6]{index=6}"
+        },
+        {
+          "id": "FS-SEL-G-CASH",
+          "loanProgramId": "FX-SELECT-DC-01-20-2025",
+          "category": "CASH_OUT",
+          "content": "Cash-out: if LTV <= 60% = unlimited; if LTV > 60% = max $1,000,000 unless 18 months additional reserves (then unlimited). Condos cash-out max 75% LTV.",
+          "sourceReference": "Flex Select Matrix — cash-out rules. :contentReference[oaicite:7]{index=7}"
+        }
+      ]
+    },
+    {
+      "id": "SELECT-ITIN-01-20-2025",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "Select ITIN",
+      "programCode": "SELECT_ITIN_01_20_2025",
+      "description": "Standalone Select ITIN program matrix (separate from Flex Select); full/alt doc differences captured in matrix.",
+      "sourceDocument": "01 20 2025_v1.2_Flex NonQM Combined Matrices.pdf",
+      "minLoanAmount": 125000,
+      "maxLoanAmount": 2500000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "ITIN-EMR-740-1",
+          "loanProgramId": "SELECT-ITIN-01-20-2025",
+          "minFicoScore": 740,
+          "minLoanAmount": null,
+          "maxLoanAmount": 1500000,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 85.0,
+          "reservesMonths": null,
+          "notes": "Select ITIN Primary Full Doc Purchase up to 85% LTV (Full Doc only for max 85% LTV on 1-unit SFR/PUD/TH). Alt Doc lower LTVs — see matrix for alt doc bands.",
+          "sourceReference": "Select ITIN Matrix (Combined Matrices). :contentReference[oaicite:8]{index=8}"
+        },
+        {
+          "id": "ITIN-EMR-720-2",
+          "loanProgramId": "SELECT-ITIN-01-20-2025",
+          "minFicoScore": 720,
+          "minLoanAmount": 1500000,
+          "maxLoanAmount": 2000000,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "CASH_OUT",
+          "maxLtv": 80.0,
+          "reservesMonths": 6,
+          "notes": "Select ITIN cash-out bands: see matrix for 2.0M–2.5M bands and alt doc differences. 6-month seasoning required for cash-out.",
+          "sourceReference": "Select ITIN Matrix (Combined Matrices). :contentReference[oaicite:9]{index=9}"
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "ITIN-G-ELIG",
+          "loanProgramId": "SELECT-ITIN-01-20-2025",
+          "category": "ITIN_SPECIFICS",
+          "content": "ITIN borrowers: ITIN must be assigned prior to application; min 2 years consistent ITIN payments reporting; primary borrower should be ITIN borrower. Escrow impounds required. See Select ITIN documentation requirements.",
+          "sourceReference": "Select ITIN Guidelines (Combined Matrices + Guidelines). "
+        }
+      ]
+    },
+    {
+      "id": "DSCR-SUP-01-20-2025",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "DSCR Supreme",
+      "programCode": "DSCR_SUPREME_01_20_2025",
+      "description": "DSCR Supreme matrix (business-purpose investor product). Min DSCR 1.00 (1.25 for first-time investors); max LTVs and cash-out per matrix.",
+      "sourceDocument": "01 20 2025_v1.2_Flex NonQM Combined Matrices.pdf",
+      "minLoanAmount": 150000,
+      "maxLoanAmount": 2000000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "DSCR-EMR-740-1",
+          "loanProgramId": "DSCR-SUP-01-20-2025",
+          "minFicoScore": 740,
+          "minLoanAmount": null,
+          "maxLoanAmount": 2000000,
+          "occupancyType": "INVESTOR",
+          "loanPurpose": "PURCHASE",
+          "dscrValue": 1.00,
+          "maxLtv": 80.0,
+          "reservesMonths": 3,
+          "notes": "DSCR Supreme: 740 band -> purchase LTV 80, cash-out LTV 75. First-time investor DSCR min =1.25. Cash-out max $1,000,000 when >50% LTV; <=50% unlimited. See matrix for exact bands.",
+          "sourceReference": "DSCR Supreme Matrix (Combined Matrices). :contentReference[oaicite:11]{index=11}"
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "DSCR-G-RENT",
+          "loanProgramId": "DSCR-SUP-01-20-2025",
+          "category": "DSCR_HIGHLIGHTS",
+          "content": "Rental Income: Refinance requires property to be leased; DSCR calc = Gross Rental Income / PITIA (or ITIA for IO). Short-term rentals require third-party validation for locality rules. See DSCR section for rental evidence rules.",
+          "sourceReference": "DSCR Supreme Guidelines (Combined Matrices). :contentReference[oaicite:12]{index=12}"
+        }
+      ]
+    },
+    {
+      "id": "2ND-LIEN-01-20-2025",
+      "lenderId": "11111111-2222-2222-2222-111111111111",
+      "name": "Closed End Second Lien",
+      "programCode": "CLOSED_END_SECOND_01_20_2025",
+      "description": "Closed-end second lien matrix (fixed-term second liens). Min $125k max $500k. Manual underwriting only.",
+      "sourceDocument": "01 20 2025_v1.2_Flex NonQM Combined Matrices.pdf",
+      "minLoanAmount": 125000,
+      "maxLoanAmount": 500000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "2ND-EMR-740-PUR",
+          "loanProgramId": "2ND-LIEN-01-20-2025",
+          "minFicoScore": 740,
+          "occupancyType": "PRIMARY",
+          "loanPurpose": "SECOND_LIEN",
+          "maxLtv": 85.0,
+          "reservesMonths": 6,
+          "notes": "Second lien purchase/rate&term allows CLTV up to matrix caps; cash-out CLTV limits vary by primary matrix. Manual underwriting only. Refer to 2nd Lien Matrix for per-score exposures.",
+          "sourceReference": "2nd Lien Matrix (Combined Matrices). :contentReference[oaicite:13]{index=13}"
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "2ND-G-REQUIREMENTS",
+          "loanProgramId": "2ND-LIEN-01-20-2025",
+          "category": "SECOND_LIEN_LIMITS",
+          "content": "Closed-End Second Lien: Fixed amortizing terms 15/20/25/30 years; not assumable; borrower eligibility aligned to primary matrices; cash-out seasoning/interplay rules apply per 2nd Lien Matrix.",
+          "sourceReference": "2nd Lien Matrix & Guidelines (Combined Matrices). :contentReference[oaicite:14]{index=14}"
+        }
+      ]
+    },
+    {
+      "id": "ARC-EDGE-DSCR-10-30-2025",
+      "lenderId": "11111111-3333-3333-3333-111111111111",
+      "name": "Edge DSCR",
+      "programCode": "EDGE_DSCR_10_30_2025",
+      "description": "Edge DSCR program (business purpose / investment properties). Manual underwriting; min FICO 700; min payment history 1x30x12; min DSCR 0.80 (matrix dependent); reserves and LTV per matrix.",
+      "sourceDocument": "Edge_and_Access_DSCR_Product_Matrix_-_10_30_2025.pdf",
+      "minLoanAmount": 150000,
+      "maxLoanAmount": 3000000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "EDGE-700-3000000-PUR",
+          "loanProgramId": "ARC-EDGE-DSCR-10-30-2025",
+          "minFicoScore": 700,
+          "minDscr": 1.00,
+          "maxLoanAmount": 3000000,
+          "occupancyType": "INVESTOR",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 0.70,
+          "reservesMonths": 3,
+          "notes": "Edge DSCR: 700 FICO, $3,000,000 max -> Purchase LTV 70%. (Matrix row).",
+          "sourceReference": "Edge DSCR LTV Matrix (Edge & Access DSCR Product Matrix). :contentReference[oaicite:4]{index=4}"
+        },
+        {
+          "id": "EDGE-700-2000000-PUR",
+          "loanProgramId": "ARC-EDGE-DSCR-10-30-2025",
+          "minFicoScore": 700,
+          "minDscr": 1.00,
+          "maxLoanAmount": 2000000,
+          "occupancyType": "INVESTOR",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 0.75,
+          "reservesMonths": 3,
+          "notes": "Edge DSCR: 700 FICO, $2,000,000 -> Purchase LTV 75%. (Matrix row).",
+          "sourceReference": "Edge DSCR LTV Matrix. :contentReference[oaicite:5]{index=5}"
+        },
+        {
+          "id": "EDGE-720-1500000-CASH",
+          "loanProgramId": "ARC-EDGE-DSCR-10-30-2025",
+          "minFicoScore": 720,
+          "minDscr": 0.80,
+          "maxLoanAmount": 1500000,
+          "occupancyType": "INVESTOR",
+          "loanPurpose": "CASH_OUT",
+          "maxLtv": 0.70,
+          "reservesMonths": 6,
+          "notes": "Edge DSCR: 720 band cash-out LTV 70% (matrix footnotes apply). Cash-out when LTV >65%: max $1,000,000 cash-in-hand. See matrix footnotes for condo/condotel exceptions and IO DSCR requirements.",
+          "sourceReference": "Edge DSCR LTV Matrix and LTV footnotes. "
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "EDGE-G-DSCR",
+          "loanProgramId": "ARC-EDGE-DSCR-10-30-2025",
+          "category": "DSCR_RULES",
+          "content": "Edge DSCR highlights: Min FICO 700, payment history 1x30x12 on subject and primary residence, Interest-Only loans require DSCR >= 1.00, First Time Investors require DSCR > 1.00. Short-term rentals: special DSCR minimums (matrix footnotes).",
+          "sourceReference": "Edge & Access DSCR Product Matrix — program highlights and footnotes. :contentReference[oaicite:7]{index=7}"
+        },
+        {
+          "id": "EDGE-G-RESERVES",
+          "loanProgramId": "ARC-EDGE-DSCR-10-30-2025",
+          "category": "RESERVES",
+          "content": "Reserve requirements (PITIA-based): Loan < $1,000,000 => 3 months; Loan > $1,000,000 to < $1,500,000 => 6 months; Loan > $1,500,000 => 9 months. Cash-out funds may be used for reserves. (Edge program minimum reserve = 3 months).",
+          "sourceReference": "Edge & Access DSCR Product Matrix — Reserve Requirements. :contentReference[oaicite:8]{index=8}"
+        },
+        {
+          "id": "EDGE-G-APPRAISAL",
+          "loanProgramId": "ARC-EDGE-DSCR-10-30-2025",
+          "category": "APPRAISAL",
+          "content": "Appraisals: One appraisal required for loans < $2,000,000; two appraisals required for loans > $2,000,000. For 1-unit properties include Form 1007; for 2-4 units use Form 1025. Collateral review and SSR thresholds per guide.",
+          "sourceReference": "Edge & Access DSCR Product Matrix — Appraisal Requirements; Arc Underwriting Guide for collateral reviews. "
+        },
+        {
+          "id": "EDGE-G-PROPERTY",
+          "loanProgramId": "ARC-EDGE-DSCR-10-30-2025",
+          "category": "PROPERTY_TYPES",
+          "content": "Eligible: 1-4 units, PUD, warrantable and non-warrantable condos, condotels (with limits), rural up to 20 acres. Ineligible: mixed-use properties. Condotel and non-warrantable condo LTV caps apply (see matrix footnotes).",
+          "sourceReference": "Edge & Access DSCR Product Matrix — Property Types & footnotes. :contentReference[oaicite:10]{index=10}"
+        }
+      ]
+    },
+
+    {
+      "id": "ARC-ACCESS-DSCR-10-30-2025",
+      "lenderId": "11111111-3333-3333-3333-111111111111",
+      "name": "Access DSCR",
+      "programCode": "ACCESS_DSCR_10_30_2025",
+      "description": "Access DSCR program (business purpose / investment properties) — wider FICO acceptance (min 640), lower DSCR floor allowed by band; reserves and LTV per Access matrix.",
+      "sourceDocument": "Edge_and_Access_DSCR_Product_Matrix_-_10_30_2025.pdf",
+      "minLoanAmount": 125000,
+      "maxLoanAmount": 2500000,
+      "eligibility_matrix_rules": [
+        {
+          "id": "ACCESS-740-2500000-PUR",
+          "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
+          "minFicoScore": 740,
+          "minDscr": 1.06,
+          "maxLoanAmount": 2500000,
+          "occupancyType": "INVESTOR",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 0.70,
+          "reservesMonths": 6,
+          "notes": "Access DSCR: DSCR >=1.06 with min 740 FICO -> $2.5M max -> Purchase LTV 70% (matrix).",
+          "sourceReference": "Access DSCR LTV Matrix. :contentReference[oaicite:11]{index=11}"
+        },
+        {
+          "id": "ACCESS-720-2000000-PUR",
+          "loanProgramId": "ARC-ACCESS-DSCR-10_30-2025",
+          "minFicoScore": 720,
+          "minDscr": 1.00,
+          "maxLoanAmount": 2000000,
+          "occupancyType": "INVESTOR",
+          "loanPurpose": "PURCHASE",
+          "maxLtv": 0.75,
+          "reservesMonths": 6,
+          "notes": "Access DSCR: 720 band -> $2,000,000 -> Purchase LTV 75% (matrix).",
+          "sourceReference": "Access DSCR matrix. :contentReference[oaicite:12]{index=12}"
+        },
+        {
+          "id": "ACCESS-660-1000000-CASH",
+          "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
+          "minFicoScore": 660,
+          "minDscr": 0.75,
+          "maxLoanAmount": 1000000,
+          "occupancyType": "INVESTOR",
+          "loanPurpose": "CASH_OUT",
+          "maxLtv": 0.65,
+          "reservesMonths": 6,
+          "notes": "Access DSCR: 660 band -> $1,000,000 -> Cash-out LTV 65% (matrix). Cash-out limits: <60% LTV unlimited cash-in; >60% LTV max $500,000 cash-in-hand (matrix footnote).",
+          "sourceReference": "Access DSCR LTV Matrix and footnotes. "
+        }
+      ],
+      "guidelines": [
+        {
+          "id": "ACCESS-G-DSCR",
+          "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
+          "category": "DSCR_RULES",
+          "content": "Access DSCR highlights: Min FICO 640, payment history 0x30x12, DSCR minimums per matrix (some bands require >=1.25 for short-term rentals when LTV > 75%); Interest-Only loans require DSCR > 1.00 for many bands.",
+          "sourceReference": "Access DSCR Product Matrix — program highlights and footnotes. :contentReference[oaicite:14]{index=14}"
+        },
+        {
+          "id": "ACCESS-G-RESERVES",
+          "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
+          "category": "RESERVES",
+          "content": "Reserve table (PITIA-based): Loan $125K–$500K and <=70% LTV => 3 months; $125K–$500K and >70% LTV => 6 months; Loan > $500K => 6 months. Cash-out funds allowed to satisfy reserves.",
+          "sourceReference": "Edge & Access DSCR Product Matrix — Reserve Requirements. :contentReference[oaicite:15]{index=15}"
+        },
+        {
+          "id": "ACCESS-G-APPRAISAL",
+          "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
+          "category": "APPRAISAL",
+          "content": "Appraisal rules: One appraisal for loans < $2M; two appraisals for > $2M; Form 1007 required for 1-unit appraisals; 1025 for 2-4 units. Appraisal Review Product/order when SSR > 2.5 (except where full second appraisal ordered).",
+          "sourceReference": "Edge & Access DSCR Product Matrix — Appraisal Requirements; Arc Underwriting Guide. "
+        },
+        {
+          "id": "ACCESS-G-CASHOUT",
+          "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
+          "category": "CASH_OUT",
+          "content": "Access cash-out rules: <60% LTV => unlimited cash-in; >60% LTV => max $500,000 cash-in-hand. Cash-out refinances for properties acquired in past 12 months require minimum DSCR 0.75 (matrix).",
+          "sourceReference": "Access DSCR LTV Matrix footnotes and Combined Matrices. "
+        },
+        {
+          "id": "ACCESS-G-ELIGIBILITY",
+          "loanProgramId": "ARC-ACCESS-DSCR-10-30-2025",
+          "category": "BORROWER_ELIGIBILITY",
+          "content": "Eligible borrowers: US citizens, permanent and non-permanent resident aliens, LLCs/corporations (entity vesting rules apply); First Time Investors allowed with min 700 FICO and min 1.00 DSCR (matrix). Foreign Nationals and certain entity POA uses are restricted per Arc Guide.",
+          "sourceReference": "Edge & Access DSCR Product Matrix and Arc Underwriting Guide — borrower eligibility. "
+        }
+      ]
+    }
+  ]
+}

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from db.models import Conversation, ChatMessage, ChatMessageRole
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
+from typing import List
 
 async def get_or_create_conversation(db: AsyncSession, conversation_id: str | None) -> Conversation:
     """Gets a conversation by ID or creates a new one."""
@@ -71,3 +72,28 @@ async def get_recent_messages(db: AsyncSession, conversation_id: str, limit: int
         .limit(limit)
     )
     return list(reversed(result.scalars().all()))
+
+# --- NEW CRUD FUNCTIONS ADDED BELOW ---
+
+async def get_all_conversations(db: AsyncSession) -> List[Conversation]:
+    """Fetches all conversations, most recent first."""
+    result = await db.execute(
+        select(Conversation).order_by(Conversation.createdAt.desc())
+    )
+    return result.scalars().all()
+
+async def get_conversation_by_id(db: AsyncSession, conversation_id: str) -> Conversation | None:
+    """Fetches a single conversation by its ID."""
+    result = await db.execute(
+        select(Conversation).where(Conversation.id == conversation_id)
+    )
+    return result.scalars().first()
+
+async def get_messages_for_conversation(db: AsyncSession, conversation_id: str) -> List[ChatMessage]:
+    """Fetches all messages for a specific conversation, oldest first."""
+    result = await db.execute(
+        select(ChatMessage)
+        .where(ChatMessage.conversationId == conversation_id)
+        .order_by(ChatMessage.createdAt.asc())
+    )
+    return result.scalars().all()

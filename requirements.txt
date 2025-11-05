@@ -7,6 +7,10 @@ alembic
 
 langchain
 langchain-groq
+langchain-core
+langchain-openai
+langchain-community
 groq
 
+thefuzz
 pydantic-settings

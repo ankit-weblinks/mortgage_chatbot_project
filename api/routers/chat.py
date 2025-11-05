@@ -8,7 +8,8 @@ from core.schemas import (
     StreamResponseInfo, StreamResponseChunk  # Import streaming schemas
 )
 from core.services import generate_and_update_summary # Correct import
-from core.agent import chain, llm
+from core.agent import create_agent_executor
+from core.tools import llm
 from db import crud
 from db.models import ChatMessageRole
 from typing import List, AsyncGenerator
@@ -47,36 +48,44 @@ async def handle_chat_message_stream(
         info_payload = StreamResponseInfo(conversation_id=conversation_id).model_dump_json()
         yield f"{info_payload}\n" # Send as a JSON string with newline delimiter
         
+        # We'll run the agent for this request and stream the final answer as a single chunk.
         full_ai_content = ""
         try:
-            # Use .astream() to get chunks from the agent chain
-            async for chunk in chain.astream({
+            # Create an agent executor bound to this request's DB session
+            agent_executor = create_agent_executor(db)
+
+            # Call the agent (non-streaming) to get the final answer
+            ai_response = await agent_executor.ainvoke({
                 "conversation_summary": conversation_summary,
                 "history": history_messages,
                 "input": request.message
-            }):
-                # chunk is an AIMessageChunk object
-                content = chunk.content
-                if content:
-                    full_ai_content += content
-                    # Send the text chunk
-                    chunk_payload = StreamResponseChunk(content=content).model_dump_json()
-                    yield f"{chunk_payload}\n" # Send as a JSON string
-        
+            })
+
+            # Extract text from the agent response. Different langchain versions
+            # may return different shapes; handle common cases.
+            if isinstance(ai_response, dict):
+                full_ai_content = ai_response.get("output") or ai_response.get("text") or ai_response.get("output_text") or str(ai_response)
+            else:
+                # If it's an object with .content
+                full_ai_content = getattr(ai_response, "content", str(ai_response))
+
+            # Stream the final answer as a single chunk
+            chunk_payload = StreamResponseChunk(content=full_ai_content).model_dump_json()
+            yield f"{chunk_payload}\n"
+
         except Exception as e:
-            print(f"Error during LLM stream: {e}")
-            # Optionally yield an error chunk to the client
-            error_payload = {"type": "error", "content": "Error processing stream."}
+            print(f"Error during agent execution: {e}")
+            error_payload = {"type": "error", "content": "Error processing request."}
             yield f"{json.dumps(error_payload)}\n"
-        
+
         finally:
-            # 5. Save the full AI response (after streaming is complete)
+            # 5. Save the full AI response (after processing)
             if full_ai_content:
                 await crud.add_message_to_conversation(
                     db, conversation_id, ChatMessageRole.AI, full_ai_content
                 )
-            
-            # 6. Schedule summary update (after streaming is complete)
+
+            # 6. Schedule summary update (after processing is complete)
             background_tasks.add_task(generate_and_update_summary, db, conversation_id, llm)
 
     # 7. Return the streaming response

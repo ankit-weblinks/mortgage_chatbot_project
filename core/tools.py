@@ -1,6 +1,5 @@
 # tools.py
-import os
-import json
+import re
 from typing import List, Optional
 from langchain_core.tools import tool
 from langchain_groq import ChatGroq
@@ -15,6 +14,18 @@ from db.models import (
 from config.settings import settings
 
 # --- Private Helper Functions ---
+
+def _normalize_string(input_str: str) -> str:
+    """
+    Cleans a string by replacing unicode spaces and removing non-alphanumeric chars.
+    """
+    if not input_str:
+        return ""
+    # Replace various space-like characters with a standard space
+    normalized = re.sub(r'[\s\u202f\u00a0]+', ' ', input_str)
+    # Optional: remove punctuation if it causes issues
+    # normalized = re.sub(r'[^\w\s]', '', normalized)
+    return normalized.strip()
 
 async def _get_db_schema_for_llm() -> str:
     """
@@ -70,6 +81,8 @@ async def _find_program_by_name(session, program_name: str) -> Optional[LoanProg
     Finds a loan program using fuzzy string matching.
     """
     CONFIDENCE_THRESHOLD = 85
+
+    normalized_name = _normalize_string(program_name)
     
     query = select(LoanProgram.id, LoanProgram.name)
     result = await session.execute(query)
@@ -81,7 +94,7 @@ async def _find_program_by_name(session, program_name: str) -> Optional[LoanProg
     # Create a mapping of {name: id}
     choices = {prog.name: prog.id for prog in all_programs}
     
-    best_match = process.extractOne(program_name, choices.keys())
+    best_match = process.extractOne(normalized_name, choices.keys())
     
     if best_match and best_match[1] >= CONFIDENCE_THRESHOLD:
         program_id = choices[best_match[0]]
@@ -92,54 +105,120 @@ async def _find_program_by_name(session, program_name: str) -> Optional[LoanProg
     
     return None
 
+async def _find_lender_by_name(session, name: str) -> Optional[Lender]:
+    """
+    Finds a lender by name using fuzzy matching.
+    """
+    CONFIDENCE_THRESHOLD = 85
+    normalized_name = _normalize_string(name)
+
+    
+    if not normalized_name:
+        return None
+
+    query = select(Lender)
+    result = await session.execute(query)
+    all_lenders = result.scalars().all()
+
+    if not all_lenders:
+        return None
+
+    # Create a mapping of choice (Lender Name) to the actual Lender object
+    choices = {lender.name: lender for lender in all_lenders}
+
+    # --- UPDATE THIS LINE ---
+    # Use the normalized_name for matching
+    best_match = process.extractOne(normalized_name, choices.keys())
+    # ------------------------
+
+    if best_match and best_match[1] >= CONFIDENCE_THRESHOLD:
+        # Return the Lender object from the choices map
+        return choices[best_match[0]]
+
+    return None
+
 # --- Specialized Tools ---
+
+# @tool
+# async def get_available_lenders() -> str:
+#     """
+#     Retrieves a list of all available lender names from the database.
+#     Use this when the user asks "who are your lenders?" or "list all lenders".
+#     """
+#     async with AsyncSessionFactory() as session:
+#         try:
+#             query = select(Lender.name).order_by(Lender.name)
+#             result = await session.execute(query)
+#             lenders = result.scalars().all()
+            
+#             if not lenders:
+#                 return "No lenders found in the database."
+            
+#             return "Available Lenders:\n- " + "\n- ".join(lenders)
+        
+#         except Exception as e:
+#             return f"Error retrieving lenders: {e}"
 
 @tool
 async def get_available_lenders() -> str:
     """
-    Retrieves a list of all available lender names from the database.
-    Use this when the user asks "who are your lenders?" or "list all lenders".
+    Retrieves a list of all available lenders.
+    This version does not query the database but returns a predefined list
+    of lenders with their IDs and names.
     """
-    async with AsyncSessionFactory() as session:
-        try:
-            query = select(Lender.name).order_by(Lender.name)
-            result = await session.execute(query)
-            lenders = result.scalars().all()
-            
-            if not lenders:
-                return "No lenders found in the database."
-            
-            return "Available Lenders:\n- " + "\n- ".join(lenders)
-        
-        except Exception as e:
-            return f"Error retrieving lenders: {e}"
+    lenders = [
+        {
+            "id": "11111111-1111-1111-1111-111111111111",
+            "name": "Champions Funding, LLC"
+        },
+        {
+            "id": "11111111-2222-2222-2222-111111111111",
+            "name": "N QM FUNDING"
+        },
+        {
+            "id": "11111111-3333-3333-3333-111111111111",
+            "name": "ARC Home"
+        }
+    ]
+
+    if not lenders:
+        return "No lenders found."
+
+    # Format as a readable string
+    lender_list = "\n".join(
+        [f"- {lender['name']} (ID: {lender['id']})" for lender in lenders]
+    )
+
+    return f"Available Lenders:\n{lender_list}"
+
 
 @tool
-async def get_loan_programs_by_lender(lender_name: str) -> str:
+async def get_loan_programs_by_lender(lenderId: str) -> str:
     """
     Retrieves all loan programs offered by a specific lender.
-    Use this when the user asks "what programs does [Lender Name] have?"
+    Use this when the user asks "what programs does [lender name] have?"
     
     Args:
-        lender_name (str): The name of the lender to search for.
+        lenderId (UUID): The id of the lender to search for.
     """
     async with AsyncSessionFactory() as session:
         try:
-            query = select(LoanProgram.name, LoanProgram.programCode, LoanProgram.description) \
+            query = select(LoanProgram.id, LoanProgram.lenderId, LoanProgram.name, LoanProgram.programCode, LoanProgram.description) \
                     .join(Lender) \
-                    .where(Lender.name.ilike(f"%{lender_name}%")) \
+                    .where(Lender.id.ilike(f"%{lenderId}%")) \
                     .order_by(LoanProgram.name)
             
             result = await session.execute(query)
             programs = result.fetchall()
             
             if not programs:
-                return f"No loan programs found for a lender matching '{lender_name}'."
+                return f"No loan programs found for a lender matching '{lenderId}'."
             
             # Find the actual lender name from the first result if needed (to confirm)
             # This is a bit complex, let's just use the user's input for now.
-            result_str = f"Loan Programs for lender '{lender_name}':\n"
+            result_str = f"Loan Programs for lender '{lenderId}':\n"
             for prog in programs:
+                result_str += f"\n- **{prog.id}** (Code: {prog.lenderId})\n"
                 result_str += f"\n- **{prog.name}** (Code: {prog.programCode})\n"
                 result_str += f"  Description: {prog.description}\n"
             
@@ -162,7 +241,10 @@ async def get_program_guidelines(program_id: str, category: Optional[str] = None
     async with AsyncSessionFactory() as session:
         try:
             # --- 1. Fetch the program ---
-            program = await session.get(LoanProgram, program_id)
+            query = select(LoanProgram).where(LoanProgram.idilike(f"%{program_id}%"))
+            result = await session.execute(query)
+            program = result.fetchone()
+
             if not program:
                 return f"❌ Could not find a loan program with ID '{program_id}'."
 

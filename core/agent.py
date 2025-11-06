@@ -87,11 +87,11 @@ class AgentState(TypedDict):
 # 6. Define the Graph Nodes
 # Nodes are the "steps" in our agent's logic.
 
-def call_model(state: AgentState) -> dict:
+async def call_model(state: AgentState) -> dict:
     """The node that calls the Groq LLM."""
     messages = state['messages']
     # Invoke the LLM with the current list of messages
-    response = llm_with_tools.invoke(messages)
+    response = await llm_with_tools.ainvoke(messages)
     # Return the AI's response to be added to the state
     return {"messages": [response]}
 

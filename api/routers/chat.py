@@ -4,15 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import StreamingResponse
 
 from db.session import get_db_session
-from core.schemas import ChatRequest, ChatResponse
-from core.services import process_chat_message
+from core.schemas import ChatRequest
+from core.services import stream_chat_message
 from db import crud
 from core.schemas import (
     ChatRequest, 
-    ConversationInfo, ConversationDetail,
-    StreamResponseInfo, StreamResponseChunk
+    ConversationInfo, ConversationDetail
 )
-from typing import List, AsyncGenerator
+from typing import List
 
 
 router = APIRouter()
@@ -27,8 +26,14 @@ async def chat_with_agent(
     Handles a chat request from the user and returns the AI response.
     """
     try:
-        response = await process_chat_message(request, db)
-        return response
+        async def response_generator():
+            async for chunk in stream_chat_message(request, db, background_tasks):
+                yield f"{chunk}\n"
+
+        return StreamingResponse(
+            response_generator(),
+            media_type="application/x-json-stream"
+        )
     except Exception as e:
         print(f"[ERROR] Chat processing failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,6 +1,7 @@
 # core/services.py
+import json
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.schemas import ChatRequest, ChatResponse
+from core.schemas import ChatRequest, StreamResponseInfo, StreamResponseChunk
 from db.crud import (
     get_or_create_conversation, 
     add_message_to_conversation,
@@ -18,62 +19,76 @@ from langchain_core.messages import SystemMessage, HumanMessage
 # --- *** END OF REQUIRED CHANGES *** ---
 
 
-async def process_chat_message(
-    request: ChatRequest, db: AsyncSession
-) -> ChatResponse:
-    
-    # 1. Get or create the conversation
+async def stream_chat_message(
+    request: ChatRequest, db: AsyncSession, background_tasks
+):
+    """
+    Streams AI responses chunk by chunk from the agent (chain.astream).
+    """
+    # 1. Get or create conversation
     conversation = await get_or_create_conversation(db, request.conversation_id)
-    
-    # 2. Save the user's message
+    conversation_id = conversation.id
+
+    # 2. Save user's message
     await add_message_to_conversation(
-        db, conversation.id, ChatMessageRole.USER, request.message
+        db, conversation_id, ChatMessageRole.USER, request.message
     )
-    
-    # 3. Load history and summary for the agent
-    # history_messages = await get_chat_history_messages(db, conversation.id)
+
+    # 3. Load history and summary
+    history_messages = await get_chat_history_messages(db, conversation_id)
     conversation_summary = conversation.summary or "No summary yet."
-    
-    # --- *** START OF REQUIRED CHANGES *** ---
 
-    # 4. Format the system prompt
-    final_system_prompt = system_prompt.format(
-        conversation_summary=conversation_summary
-    )
-    
-    # 5. Construct the input message list
-    input_messages = [SystemMessage(content=final_system_prompt)]
-    # input_messages.extend(history_messages)
-    input_messages.append(HumanMessage(content=request.message))
-    
-    # 6. Create the graph input
-    graph_input = {"messages": input_messages}
-    
-    # 7. Invoke the LangGraph agent
-    # The output is the final state of the graph
-    ai_response_state = await chain.ainvoke(graph_input)
+    # 4. Yield initial info message
+    info_payload = StreamResponseInfo(conversation_id=conversation_id).model_dump_json()
+    yield info_payload
 
-    # 8. Extract the final message from the state
-    ai_content = ""
-    if "messages" in ai_response_state and ai_response_state["messages"]:
-        # The last message in the state is the AI's final response
-        ai_content = ai_response_state["messages"][-1].content
-    else:
-        ai_content = "I'm sorry, I encountered an error."
-    
-    # --- *** END OF REQUIRED CHANGES *** ---
+    # 5. Start streaming model output
+    full_ai_content = ""
 
-    # 9. Save the AI's response
-    await add_message_to_conversation(
-        db, conversation.id, ChatMessageRole.AI, ai_content
-    )
-    
-    # 10. Update the summary (can be run in background)
-    # This uses the 'llm' object we exported from core/agent.py
-    await generate_and_update_summary(db, conversation.id, llm)
-    
-    # 11. Return the response
-    return ChatResponse(response=ai_content, conversation_id=conversation.id)
+    try:
+        formatted_system_prompt = system_prompt.format(
+            conversation_summary=conversation_summary
+        )
+        messages_input = [
+            SystemMessage(content=formatted_system_prompt),
+            HumanMessage(content=request.message)
+        ]
+
+        final_content = None
+
+        async for chunk in chain.astream({"messages": messages_input}):
+            if "agent" in chunk:
+                agent_output = chunk["agent"]
+                if "messages" in agent_output:
+                    last_message = agent_output["messages"][-1]
+                    
+                    if last_message.content and not last_message.tool_calls:
+                        final_content = last_message.content
+
+        if final_content:
+            full_ai_content = final_content # Save for DB
+            chunk_payload = StreamResponseChunk(content=full_ai_content).model_dump_json()
+            yield chunk_payload
+        else:
+            print("[STREAM WARNING] Graph finished without a final AI message.")
+
+    except Exception as e:
+        print(f"[STREAM ERROR] {e}")
+        error_payload = json.dumps({
+            "type": "error",
+            "content": "Error during streaming."
+        })
+        yield error_payload
+
+    finally:
+        # 6. Save final AI message
+        if full_ai_content:
+            await add_message_to_conversation(
+                db, conversation_id, ChatMessageRole.AI, full_ai_content
+            )
+
+        # 7. Update summary asynchronously
+        background_tasks.add_task(generate_and_update_summary, db, conversation_id, llm)
 
 
 async def generate_and_update_summary(db: AsyncSession, conversation_id: str, llm):

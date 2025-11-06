@@ -1,13 +1,14 @@
 # core/agent.py
 import os
+from typing import Annotated, Literal
+from typing_extensions import TypedDict
 from langchain_groq import ChatGroq
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.agents import AgentExecutor, create_openai_tools_agent
-from config.settings import settings
+from langchain_core.messages import BaseMessage
+from langgraph.graph import StateGraph, START, END
+# from langgraph.tool_executor import ToolExecutor
+from langgraph.prebuilt import ToolNode
 
-# Import the new tools you created
-# (Make sure your tools.py is in the correct path, e.g., 'core/tools.py' or just 'tools.py')
-# Assuming tools.py is in the same 'core' directory:
+from config.settings import settings
 from core.tools import (
     get_available_lenders,
     get_loan_programs_by_lender,
@@ -16,12 +17,13 @@ from core.tools import (
     query_database_assistant
 )
 
-# 1. Initialize the Groq Chat LLM
-# We use a more powerful model for better agentic behavior and tool-calling
+# 1. Define the LLM
+# We use a model that is good at tool calling, as recommended by Groq docs.
+# 'llama3-70b-8192' is a great choice.
 llm = ChatGroq(
-    model="openai/gpt-20b",  # Switched to a more capable model
+    model="openai/gpt-oss-20b",
     groq_api_key=settings.GROQ_API_KEY,
-    temperature=0.0  # Set to 0.0 for more deterministic and accurate tool use
+    temperature=0.0
 )
 
 # 2. Define the list of available tools
@@ -30,15 +32,23 @@ tools = [
     get_loan_programs_by_lender,
     get_program_guidelines,
     find_eligibility_rules,
-    query_database_assistant  # The "backup" tool
+    query_database_assistant
 ]
 
-# 3. Define the "Smart System Prompt"
-# This prompt guides the agent on how and when to use the tools.
+# 3. Bind the tools to the LLM
+# This tells the LLM what tools it has available.
+llm_with_tools = llm.bind_tools(tools)
+
+# 4. Define the "Smart System Prompt"
+# This is the same as your old prompt, but I've added a placeholder
+# for the conversation summary, which you were passing but not using.
 system_prompt = """
 You are a specialized Mortgage Underwriting Assistant. Your purpose is to provide accurate and detailed information about mortgage lenders, their loan programs, and specific underwriting guidelines.
 
 You have access to a database and a set of specialized tools to answer user questions.
+
+**Conversation Summary:**
+{conversation_summary}
 
 **Your primary goal is to be accurate and helpful. Follow these rules:**
 
@@ -68,32 +78,65 @@ You have access to a database and a set of specialized tools to answer user ques
 6.  **Conversation Context:** You will be given the previous chat history. Use it to understand the user's current question in context.
 """
 
-# 4. Define the Chat Prompt Template
-# This prompt structure is required for the agent to work.
-# 'agent_scratchpad' is a special key for the agent's internal thoughts.
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", system_prompt),
-        MessagesPlaceholder(variable_name="history"),
-        ("human", "{input}"),
-        MessagesPlaceholder(variable_name="agent_scratchpad"),
-    ]
+# 5. Define the Agent State
+# This is the memory of our agent, managed by LangGraph.
+# `messages` will accumulate over the conversation.
+class AgentState(TypedDict):
+    messages: Annotated[list[BaseMessage], lambda x, y: x + y]
+
+# 6. Define the Graph Nodes
+# Nodes are the "steps" in our agent's logic.
+
+def call_model(state: AgentState) -> dict:
+    """The node that calls the Groq LLM."""
+    messages = state['messages']
+    # Invoke the LLM with the current list of messages
+    response = llm_with_tools.invoke(messages)
+    # Return the AI's response to be added to the state
+    return {"messages": [response]}
+
+# Use the pre-built ToolNode for simplicity.
+# This node automatically executes the tools called by the LLM.
+tool_node = ToolNode(tools)
+
+# 7. Define the Conditional Edge
+# This function decides what to do after the LLM responds.
+def should_continue(state: AgentState) -> Literal["tools", "__end__"]:
+    """
+    Decides whether to call tools or end the conversation.
+    """
+    last_message = state['messages'][-1]
+    # If the LLM's last message includes tool calls, route to the 'tools' node
+    if last_message.tool_calls:
+        return "tools"
+    # Otherwise, end the graph execution
+    return "__end__"
+
+# 8. Build the Graph
+workflow = StateGraph(AgentState)
+
+# Add the nodes
+workflow.add_node("agent", call_model)
+workflow.add_node("tools", tool_node)
+
+# Set the entry point
+workflow.set_entry_point("agent")
+
+# Add the conditional edge
+workflow.add_conditional_edges(
+    "agent",
+    should_continue,
+    {
+        "tools": "tools",
+        "__end__": "__end__"
+    }
 )
 
-# 5. Create the Agent
-# This binds the LLM, tools, and prompt together.
-agent = create_openai_tools_agent(llm, tools, prompt)
+# Add the edge from the tools back to the agent
+workflow.add_edge("tools", "agent")
 
-# 6. Create the Agent Executor
-# This is the runnable object that handles the agent's logic,
-# tool execution, and response generation.
-# We name it 'chain' for compatibility with your existing 'services.py'.
-chain = AgentExecutor(
-    agent=agent, 
-    tools=tools, 
-    verbose=True,  # Set to True for debugging, False for production
-    handle_parsing_errors=True # Gracefully handle any agent errors
-)
+# 9. Compile the Graph
+# This creates the runnable `chain` object.
+chain = workflow.compile()
 
-# Note: The 'llm' object is also exported, as your 'services.py'
-# uses it for generating summaries.
+# Note: We still export 'llm' for the summary service in 'services.py'.

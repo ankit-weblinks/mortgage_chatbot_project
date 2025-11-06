@@ -173,7 +173,7 @@ async def get_available_lenders() -> str:
         },
         {
             "id": "11111111-2222-2222-2222-111111111111",
-            "name": "N QM FUNDING"
+            "name": "NQM FUNDING"
         },
         {
             "id": "11111111-3333-3333-3333-111111111111",
@@ -199,34 +199,44 @@ async def get_loan_programs_by_lender(lenderId: str) -> str:
     Use this when the user asks "what programs does [lender name] have?"
     
     Args:
-        lenderId (UUID): The id of the lender to search for.
+        lenderId (str): The id of the lender to search for.
     """
     async with AsyncSessionFactory() as session:
         try:
-            query = select(LoanProgram.id, LoanProgram.lenderId, LoanProgram.name, LoanProgram.programCode, LoanProgram.description) \
-                    .join(Lender) \
-                    .where(Lender.id.ilike(f"%{lenderId}%")) \
+            # --- 1. Fetch Lender to get the name (FIXED) ---
+            lender_query = select(Lender.name).where(Lender.id == lenderId)
+            lender_result = await session.execute(lender_query)
+            lender_name = lender_result.scalar_one_or_none()
+
+            if not lender_name:
+                 return f"No lender found with ID '{lenderId}'."
+
+            # --- 2. Fetch Programs (FIXED) ---
+            # Use '==' for an exact ID match
+            query = select(LoanProgram.id, LoanProgram.name, LoanProgram.programCode, LoanProgram.description) \
+                    .where(LoanProgram.lenderId == lenderId) \
                     .order_by(LoanProgram.name)
             
             result = await session.execute(query)
             programs = result.fetchall()
             
             if not programs:
-                return f"No loan programs found for a lender matching '{lenderId}'."
+                return f"No loan programs found for lender '{lender_name}'."
             
-            # Find the actual lender name from the first result if needed (to confirm)
-            # This is a bit complex, let's just use the user's input for now.
-            result_str = f"Loan Programs for lender '{lenderId}':\n"
+            # --- 3. Format Output (CLEANED) ---
+            # This formatting is much clearer for the LLM and user
+            result_str = f"Loan Programs for lender '{lender_name}':\n"
             for prog in programs:
-                result_str += f"\n- **{prog.id}** (Code: {prog.lenderId})\n"
-                result_str += f"\n- **{prog.name}** (Code: {prog.programCode})\n"
-                result_str += f"  Description: {prog.description}\n"
+                result_str += f"\n- **{prog.name}**\n"
+                result_str += f"  - ID: {prog.id}\n"
+                result_str += f"  - Code: {prog.programCode}\n"
+                result_str += f"  - Description: {prog.description}\n"
             
             return result_str
         
         except Exception as e:
+            print(f"[get_loan_programs_by_lender ERROR] {e}")
             return f"Error retrieving loan programs: {e}"
-
 @tool
 async def get_program_guidelines(program_id: str, category: Optional[str] = None) -> str:
     """
@@ -240,10 +250,13 @@ async def get_program_guidelines(program_id: str, category: Optional[str] = None
     """
     async with AsyncSessionFactory() as session:
         try:
-            # --- 1. Fetch the program ---
-            query = select(LoanProgram).where(LoanProgram.idilike(f"%{program_id}%"))
+            # --- 1. Fetch the program (FIXED) ---
+            # We are looking for an exact ID, so we use '=='
+            query = select(LoanProgram).where(LoanProgram.id == program_id)
             result = await session.execute(query)
-            program = result.fetchone()
+            
+            # Use .scalar_one_or_none() for a simpler way to get a single item
+            program = result.scalar_one_or_none()
 
             if not program:
                 return f"❌ Could not find a loan program with ID '{program_id}'."
@@ -285,8 +298,10 @@ async def get_program_guidelines(program_id: str, category: Optional[str] = None
             return result_str
 
         except Exception as e:
+            # Provide a more detailed error log for debugging
+            print(f"[get_program_guidelines ERROR] {e}")
             return f"💥 Error retrieving guidelines: {e}"
-
+        
 @tool
 async def find_eligibility_rules(
     program_name: str, 

@@ -11,12 +11,9 @@ from db.crud import (
 )
 from db.models import ChatMessageRole
 
-# --- *** START OF REQUIRED CHANGES *** ---
-# Fix imports: Import the 'chain', 'llm', and 'system_prompt' from our new agent
 from core.agent import chain, llm, system_prompt
-# Add message types for constructing the graph input
 from langchain_core.messages import SystemMessage, HumanMessage
-# --- *** END OF REQUIRED CHANGES *** ---
+from langchain_core.callbacks import StdOutCallbackHandler
 
 
 async def stream_chat_message(
@@ -42,6 +39,14 @@ async def stream_chat_message(
     info_payload = StreamResponseInfo(conversation_id=conversation_id).model_dump_json()
     yield info_payload
 
+    handler = StdOutCallbackHandler()
+
+    # Define the config for the stream, now including the callback
+    stream_config = {
+        "configurable": {"conversation_id": conversation_id},
+        "callbacks": [handler]  # <-- This enables verbose logging
+    }
+
     # 5. Start streaming model output
     full_ai_content = ""
 
@@ -56,7 +61,7 @@ async def stream_chat_message(
 
         final_content = None
 
-        async for chunk in chain.astream({"messages": messages_input}):
+        async for chunk in chain.astream({"messages": messages_input}, stream_config):
             if "agent" in chunk:
                 agent_output = chunk["agent"]
                 if "messages" in agent_output:

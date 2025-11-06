@@ -14,7 +14,8 @@ from core.tools import (
     get_loan_programs_by_lender,
     get_program_guidelines,
     find_eligibility_rules,
-    query_database_assistant
+    query_database_assistant,
+    find_programs_by_scenario
 )
 
 # 1. Define the LLM
@@ -32,7 +33,8 @@ tools = [
     get_loan_programs_by_lender,
     get_program_guidelines,
     find_eligibility_rules,
-    query_database_assistant
+    query_database_assistant,
+    find_programs_by_scenario
 ]
 
 # 3. Bind the tools to the LLM
@@ -57,6 +59,7 @@ You have access to a database and a set of specialized tools to answer user ques
     * For "What programs does [Lender X] have?": Use `get_loan_programs_by_lender`.
     * For "What are the guidelines for [Program Y]?": Use `get_program_guidelines`.
     * For "What is the max LTV for [Program Z] with FICO 720...": Use `find_eligibility_rules`.
+    * For "What programs can I get with FICO 720, $500k loan...": Use `find_programs_by_scenario`.
 
 2.  **Handle Ambiguous Program Names:** The `get_program_guidelines` and `find_eligibility_rules` tools have built-in fuzzy matching. Trust them to find the correct program even if the user misspells it. Do not ask the user to clarify spelling unless the tool fails to find a match.
 

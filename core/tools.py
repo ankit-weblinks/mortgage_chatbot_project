@@ -5,16 +5,14 @@ from typing import List, Optional
 from langchain_core.tools import tool
 from langchain_groq import ChatGroq
 from sqlalchemy.future import select
-from sqlalchemy import text
+from sqlalchemy import text, and_, or_
 from thefuzz import process
 from db.session import AsyncSessionFactory
 from db.models import (
     Lender, LoanProgram, Guideline, EligibilityMatrixRule,
     GuidelineCategory, OccupancyType, LoanPurposeType
 )
-
-# Ensure the API key is accessible for the new tool
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+from config.settings import settings
 
 # --- Private Helper Functions ---
 
@@ -151,54 +149,61 @@ async def get_loan_programs_by_lender(lender_name: str) -> str:
             return f"Error retrieving loan programs: {e}"
 
 @tool
-async def get_program_guidelines(program_name: str, category: str = None) -> str:
+async def get_program_guidelines(program_id: str, category: Optional[str] = None) -> str:
     """
-    Retrieves specific guidelines for a given loan program, optionally filtered by category.
-    This tool uses fuzzy matching, so the program_name does not need to be exact.
-    
+    Retrieves guidelines for a given loan program by ID, optionally filtered by category.
+    This avoids fuzzy name issues and ensures enum-safe filtering.
+
     Args:
-        program_name (str): The name of the loan program (e.g., "DSCR Plus").
-        category (str, optional): The specific category of guideline to fetch.
-                                  Must be one of {', '.join([e.name for e in GuidelineCategory])}.
+        program_id (str): The UUID of the loan program.
+        category (Optional[str]): Optional guideline category (e.g., 'OCCUPANCY', 'LOAN_AMOUNTS').
+                                  Must match one of GuidelineCategory names.
     """
     async with AsyncSessionFactory() as session:
         try:
-            program = await _find_program_by_name(session, program_name)
+            # --- 1. Fetch the program ---
+            program = await session.get(LoanProgram, program_id)
             if not program:
-                return f"Could not find a loan program matching '{program_name}'."
+                return f"❌ Could not find a loan program with ID '{program_id}'."
 
-            query = select(Guideline.category, Guideline.content) \
-                    .where(Guideline.loanProgramId == program.id) \
-                    .order_by(Guideline.category)
-            
+            # --- 2. Base query for guidelines ---
+            query = (
+                select(Guideline.category, Guideline.content)
+                .where(Guideline.loanProgramId == program.id)
+                .order_by(Guideline.category)
+            )
+
+            # --- 3. Filter by category if provided ---
             if category:
-                # Validate category
                 try:
                     cat_enum = GuidelineCategory[category.upper()]
                     query = query.where(Guideline.category == cat_enum)
                 except KeyError:
                     valid_cats = ', '.join([e.name for e in GuidelineCategory])
-                    return f"Invalid category '{category}'. Valid categories are: {valid_cats}"
-            
+                    return f"❌ Invalid category '{category}'. Valid categories: {valid_cats}"
+
+            # --- 4. Execute query ---
             result = await session.execute(query)
             guidelines = result.fetchall()
-            
+
+            # --- 5. Handle no results ---
             if not guidelines:
                 filter_msg = f" in category '{category}'" if category else ""
-                return f"No guidelines found for program '{program.name}'{filter_msg}."
+                return f"⚠️ No guidelines found for program '{program.name}'{filter_msg}."
 
-            result_str = f"Guidelines for Program: {program.name}\n"
-            current_cat = ""
+            # --- 6. Format results ---
+            result_str = f"📘 Guidelines for Program: **{program.name}**\n"
+            current_cat = None
             for g in guidelines:
                 if g.category.name != current_cat:
                     current_cat = g.category.name
                     result_str += f"\n**--- {current_cat} ---**\n"
                 result_str += f"- {g.content}\n"
-            
+
             return result_str
-        
+
         except Exception as e:
-            return f"Error retrieving guidelines: {e}"
+            return f"💥 Error retrieving guidelines: {e}"
 
 @tool
 async def find_eligibility_rules(
@@ -331,7 +336,7 @@ async def query_database_assistant(question: str) -> str:
     # 1. Initialize the LLM for SQL generation
     try:
         # Using a powerful model for reliable SQL generation
-        llm = ChatGroq(temperature=0, groq_api_key=GROQ_API_KEY, model_name="openai/gpt-oss-20b")
+        llm = ChatGroq(temperature=0, groq_api_key=settings.GROQ_API_KEY, model_name="openai/gpt-oss-20b")
     except Exception as e:
         return f"Error initializing LLM: {e}"
 
@@ -354,7 +359,8 @@ async def query_database_assistant(question: str) -> str:
     - **Only output the raw SQL query.**
     - Do not include any explanations, markdown (`sql ...`), or any text other than the SQL query itself.
     - Ensure the query is syntactically correct for PostgreSQL.
-    - Use table and column names exactly as they appear in the schema.
+    - Use table and column names **exactly** as they appear in the schema.
+    - **CRITICAL: Column names are case-sensitive** (e.g., use `lenderId`, not `lenderid`).
     - When comparing strings (like names), use `ILIKE` for case-insensitive matching.
     - Pay close attention to joins. `loan_program.lenderId` joins to `lender.id`. 
     `guideline.loanProgramId` joins to `loan_program.id`. 
@@ -402,3 +408,100 @@ async def query_database_assistant(question: str) -> str:
 
         except Exception as e:
             return f"Database error: {e}. The generated query was: {sql_query}"
+        
+@tool
+async def find_programs_by_scenario(
+    fico_score: int, 
+    loan_amount: float, 
+    ltv: float, 
+    loan_purpose: str, 
+    occupancy: str
+) -> str:
+    """
+    Finds all loan programs from all lenders that match a specific borrower scenario.
+    """
+
+    async with AsyncSessionFactory() as session:
+        try:
+            # --- 1. Validate Enums ---
+            try:
+                occ_enum = OccupancyType[occupancy.upper()]
+            except KeyError:
+                valid_occs = ', '.join([e.name for e in OccupancyType])
+                return f"❌ Invalid occupancy '{occupancy}'. Valid types are: {valid_occs}"
+            
+            try:
+                lp_enum = LoanPurposeType[loan_purpose.upper()]
+            except KeyError:
+                valid_lps = ', '.join([e.name for e in LoanPurposeType])
+                return f"❌ Invalid loan purpose '{loan_purpose}'. Valid types are: {valid_lps}"
+
+            # --- 2. Build Query (ORM-safe, no case issues) ---
+            query = (
+                select(
+                    Lender.name.label("lender_name"),
+                    LoanProgram.name.label("program_name"),
+                    EligibilityMatrixRule.maxLtv,
+                    EligibilityMatrixRule.reservesMonths,
+                    EligibilityMatrixRule.notes,
+                    EligibilityMatrixRule.minFicoScore,
+                    EligibilityMatrixRule.maxFicoScore,
+                    EligibilityMatrixRule.minLoanAmount,
+                    EligibilityMatrixRule.maxLoanAmount
+                )
+                .join(LoanProgram, EligibilityMatrixRule.loanProgramId == LoanProgram.id)
+                .join(Lender, LoanProgram.lenderId == Lender.id)
+                .where(
+                    and_(
+                        EligibilityMatrixRule.minFicoScore <= fico_score,
+                        or_(EligibilityMatrixRule.maxFicoScore.is_(None), EligibilityMatrixRule.maxFicoScore >= fico_score),
+                        EligibilityMatrixRule.minLoanAmount <= loan_amount,
+                        or_(EligibilityMatrixRule.maxLoanAmount.is_(None), EligibilityMatrixRule.maxLoanAmount >= loan_amount),
+                        or_(EligibilityMatrixRule.maxLtv.is_(None), EligibilityMatrixRule.maxLtv >= ltv),
+                        EligibilityMatrixRule.occupancyType == occ_enum,
+                        EligibilityMatrixRule.loanPurpose == lp_enum
+                    )
+                )
+                .order_by(Lender.name, LoanProgram.name, EligibilityMatrixRule.maxLtv.desc())
+            )
+
+            # --- 3. Execute Query ---
+            result = await session.execute(query)
+            rules = result.fetchall()
+
+            # --- 4. No Results ---
+            if not rules:
+                filters_applied = [
+                    f"FICO: {fico_score}",
+                    f"Loan Amount: {loan_amount}",
+                    f"LTV: {ltv}%",
+                    f"Occupancy: {occ_enum.name}",
+                    f"Purpose: {lp_enum.name}"
+                ]
+                return (
+                    "😕 No loan programs found matching this scenario:\n"
+                    + "\n".join(filters_applied)
+                )
+
+            # --- 5. Format the Output ---
+            result_str = f"✅ Found {len(rules)} eligible program options:\n"
+
+            current_program = ""
+            for rule in rules:
+                program_key = f"{rule.lender_name} - {rule.program_name}"
+                if program_key != current_program:
+                    result_str += f"\n**🏦 Lender: {rule.lender_name} | Program: {rule.program_name}**\n"
+                    current_program = program_key
+                
+                result_str += f"- **Max LTV:** {rule.maxLtv}% | **Reserves:** {rule.reservesMonths} months\n"
+                if rule.notes:
+                    result_str += f"  - *Notes:* {rule.notes}\n"
+                result_str += (
+                    f"  - *Rule Range:* FICO {rule.minFicoScore}-{rule.maxFicoScore}, "
+                    f"Loan ${rule.minLoanAmount:,.0f}-${rule.maxLoanAmount:,.0f}\n"
+                )
+
+            return result_str
+
+        except Exception as e:
+            return f"💥 Error finding programs by scenario: {str(e)}"

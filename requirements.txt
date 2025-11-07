@@ -12,6 +12,7 @@ langchain-openai
 langchain-community
 langgraph
 langchain-huggingface
+langchain_chroma
 sentence-transformers
 chromadb
 groq

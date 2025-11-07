@@ -44,7 +44,8 @@ async def stream_chat_message(
     # Define the config for the stream, now including the callback
     stream_config = {
         "configurable": {"conversation_id": conversation_id},
-        "callbacks": [handler]  # <-- This enables verbose logging
+        "callbacks": [handler],  # <-- This enables verbose logging
+        "recursion_limit": 100
     }
 
     # 5. Start streaming model output

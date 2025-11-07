@@ -41,9 +41,9 @@ if react_build_path.exists():
     async def get_manifest():
         return FileResponse("dist/manifest.json")
     
-    @app.get("/favicon.ico")
-    async def get_favicon():
-        return FileResponse("dist/favicon.ico")
+    # @app.get("/favicon.ico")
+    # async def get_favicon():
+    #     return FileResponse("dist/favicon.ico")
     
     # Catch-all route for React Router (must be last)
     @app.get("/{full_path:path}", tags=["Client App"])

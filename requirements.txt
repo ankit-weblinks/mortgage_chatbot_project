@@ -11,6 +11,9 @@ langchain-core
 langchain-openai
 langchain-community
 langgraph
+langchain-huggingface
+sentence-transformers
+chromadb
 groq
 
 thefuzz

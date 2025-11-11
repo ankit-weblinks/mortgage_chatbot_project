@@ -69,7 +69,7 @@ alembic upgrade head
 #### 2. Import SQL Data (PostgreSQL): This script loads the contents of db/data.json into the tables you just created.
 
 ```
-python db/import_data.py
+python db.import_data.py
 ```
 You should see a "✅ Data successfully imported..." message.
 

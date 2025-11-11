@@ -504,6 +504,78 @@ async def query_database_assistant(question: str) -> str:
             return result_str
 
         except Exception as e:
+            # If Postgres complains about an undefined column, it is often due to
+            # mixed-case (camelCase) column names that were created with quotes.
+            # Unquoted identifiers are folded to lower-case by Postgres, so a
+            # generated query like `MIN(minFicoScore)` becomes `minficoscore` and
+            # triggers UndefinedColumnError. Attempt a safe retry by quoting
+            # identifiers that appear to be camelCase (contain both lower & upper).
+            err_str = str(e)
+            try:
+                from sqlalchemy.exc import ProgrammingError
+            except Exception:
+                ProgrammingError = None
+
+            should_retry = False
+            if ProgrammingError and isinstance(e, ProgrammingError):
+                should_retry = True
+            # quick textual heuristic as a fallback
+            if not should_retry and "does not exist" in err_str and "column" in err_str:
+                should_retry = True
+
+            if should_retry:
+                # Find candidate identifiers with both lower and upper case letters
+                camel_re = re.compile(r"\b(?=\w*[a-z])(?=\w*[A-Z])\w+\b")
+                candidates = set(m.group(0) for m in camel_re.finditer(sql_query))
+                # Avoid quoting SQL keywords (simple list)
+                sql_keywords = {
+                    'select','from','where','and','or','group','by','order','limit',
+                    'min','max','avg','count','as','join','on','left','right','inner',
+                    'outer','having','distinct','ilike','like','in','is','null'
+                }
+
+                if candidates:
+                    repaired_sql = sql_query
+                    # If a previous statement failed, Postgres will mark the
+                    # transaction as aborted and further commands will raise
+                    # InFailedSQLTransactionError until a rollback occurs. Roll
+                    # back the session so we can safely retry the repaired SQL.
+                    try:
+                        await session.rollback()
+                    except Exception:
+                        # If rollback itself fails, continue to attempt the retry
+                        pass
+                    for ident in sorted(candidates, key=len, reverse=True):
+                        lower_ident = ident.lower()
+                        if lower_ident in sql_keywords:
+                            continue
+                        # Skip if already quoted
+                        if f'"{ident}"' in repaired_sql:
+                            continue
+                        # Simple replace: wrap the identifier in double quotes
+                        repaired_sql = re.sub(rf"\b{re.escape(ident)}\b", f'"{ident}"', repaired_sql)
+
+                    try:
+                        query_result = await session.execute(text(repaired_sql))
+                        rows = query_result.fetchall()
+
+                        if not rows:
+                            return "The query executed successfully (after quoting), but returned no results."
+
+                        column_names = query_result.keys()
+                        result_str = "**Query Result (after quoting identifiers):**\n"
+                        result_str += ", ".join(column_names) + "\n"
+                        result_str += "-" * (len(result_str) - 20) + "\n"
+                        for row in rows:
+                            result_str += ", ".join(map(str, row)) + "\n"
+
+                        return result_str
+
+                    except Exception as e2:
+                        # Return original error plus attempted repaired SQL for debugging
+                        return f"Database error: {e2}. Original error: {err_str}. Tried SQL: {repaired_sql}"
+
+            # If we didn't retry or retry failed, return the original error and SQL
             return f"Database error: {e}. The generated query was: {sql_query}"
         
 @tool

@@ -19,3 +19,4 @@ groq
 
 thefuzz
 pydantic-settings
+pypdf

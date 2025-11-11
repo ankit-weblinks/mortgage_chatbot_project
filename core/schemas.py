@@ -19,6 +19,8 @@ class ConversationInfo(BaseModel):
     """Minimal info for listing conversations."""
     id: str
     summary: Optional[str] = None
+    # First user message in the conversation (if any) to show context in lists
+    firstUserMessage: Optional[str] = None
     createdAt: datetime
     
     model_config = ConfigDict(from_attributes=True)

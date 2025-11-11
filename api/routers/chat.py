@@ -1,5 +1,5 @@
 # api/routers/chat.py
-from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException
+from fastapi import APIRouter, Depends, BackgroundTasks, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import StreamingResponse
 
@@ -49,7 +49,35 @@ async def list_conversations(
     Get a list of all conversations, most recent first.
     """
     conversations = await crud.get_all_conversations(db)
-    return conversations
+
+    # For each conversation include the first user message if present
+    infos = []
+    for conv in conversations:
+        first_msg = await crud.get_first_user_message_for_conversation(db, conv.id)
+        infos.append(
+            ConversationInfo(
+                id=conv.id,
+                summary=conv.summary,
+                createdAt=conv.createdAt,
+                firstUserMessage=first_msg,
+            )
+        )
+
+    return infos
+
+
+@router.delete("/conversations/{conversation_id}", status_code=204)
+async def delete_conversation(
+    conversation_id: str,
+    db: AsyncSession = Depends(get_db_session)
+):
+    """
+    Delete a conversation and all its messages. Returns 204 on success or 404 if not found.
+    """
+    deleted = await crud.delete_conversation_by_id(db, conversation_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    return Response(status_code=204)
 
 @router.get("/conversations/{conversation_id}", response_model=ConversationDetail)
 async def get_conversation_details(

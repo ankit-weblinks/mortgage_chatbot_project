@@ -1,6 +1,7 @@
 import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import delete
 from db.models import Conversation, ChatMessage, ChatMessageRole
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 from typing import List
@@ -97,3 +98,44 @@ async def get_messages_for_conversation(db: AsyncSession, conversation_id: str) 
         .order_by(ChatMessage.createdAt.asc())
     )
     return result.scalars().all()
+
+
+async def get_first_user_message_for_conversation(db: AsyncSession, conversation_id: str) -> str | None:
+    """Fetches the first message from the user for a conversation, oldest first.
+
+    Returns the message content or None if no user message exists.
+    """
+    result = await db.execute(
+        select(ChatMessage.content)
+        .where(
+            ChatMessage.conversationId == conversation_id,
+            ChatMessage.role == ChatMessageRole.USER
+        )
+        .order_by(ChatMessage.createdAt.asc())
+        .limit(1)
+    )
+    return result.scalars().first()
+
+
+async def delete_conversation_by_id(db: AsyncSession, conversation_id: str) -> bool:
+    """Delete all messages for the conversation and the conversation itself.
+
+    Returns True if a conversation was deleted, False if the conversation did not exist.
+    """
+    # Check that conversation exists
+    result = await db.execute(
+        select(Conversation).where(Conversation.id == conversation_id)
+    )
+    conversation = result.scalars().first()
+    if not conversation:
+        return False
+
+    # Delete related messages then the conversation
+    await db.execute(
+        delete(ChatMessage).where(ChatMessage.conversationId == conversation_id)
+    )
+    await db.execute(
+        delete(Conversation).where(Conversation.id == conversation_id)
+    )
+    await db.commit()
+    return True

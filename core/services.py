@@ -7,6 +7,7 @@ from db.crud import (
     add_message_to_conversation,
     get_chat_history_messages,
     get_recent_messages,
+    get_conversation_by_id,
     update_conversation_summary
 )
 from db.models import ChatMessageRole
@@ -99,21 +100,66 @@ async def stream_chat_message(
 
 async def generate_and_update_summary(db: AsyncSession, conversation_id: str, llm):
     """Generates a new summary for the conversation."""
-    recent_messages = await get_recent_messages(db, conversation_id, limit=6)
-    
+    # Fetch current conversation to include the current summary
+    conversation = await get_conversation_by_id(db, conversation_id)
+    conversation_summary = conversation.summary if conversation and conversation.summary else "No summary yet."
+
+    # Fetch a recent window of messages and pick the last 2 user + last 2 AI messages
+    recent_messages = await get_recent_messages(db, conversation_id, limit=20)
+
     if not recent_messages:
         return
 
+    # Separate by role
+    user_msgs = [m for m in recent_messages if m.role == ChatMessageRole.USER]
+    ai_msgs = [m for m in recent_messages if m.role == ChatMessageRole.AI]
+
+    # Take the most recent two of each (or fewer if not available)
+    selected_user = user_msgs[-2:]
+    selected_ai = ai_msgs[-2:]
+
+    # Combine and sort chronologically so the agent sees the real turn order
+    combined = sorted(selected_user + selected_ai, key=lambda m: m.createdAt)
+
     history_text = "\n".join(
-        f"{msg.role.name}: {msg.content}" for msg in recent_messages
+        f"{msg.role.name}: {msg.content}" for msg in combined
     )
-    
-    summary_prompt = (
-        f"Concisely summarize the following conversation, focusing on key loan "
-        f"parameters, user preferences, and products discussed.\n\n"
-        f"Conversation:\n{history_text}\n\nSummary:"
-    )
-    
+
+    summary_prompt = f"""
+    You are a summarization assistant for an expert mortgage agent. Your purpose is to
+    create a concise "briefing" for the agent based on the recent conversation. This
+    summary MUST be optimized for the agent's "Triage" workflow.
+
+    **Triage the conversation and structure your summary accordingly:**
+
+    **1. If the user has "Scenario Intent" (providing borrower qualifications):**
+    Your summary MUST state this intent and clearly list:
+    - **Collected Parameters:** (e.g., FICO: 720, LTV: 75%, Loan Amount: 500k)
+    - **Missing Parameters:** (e.g., Occupancy, Loan Purpose)
+    - **Status:** (e.g., "Agent just asked for LTV.", "User just provided FICO.")
+
+    **2. If the user has "Program-Specific Intent" (asking about a named program):**
+    Your summary MUST state this intent and:
+    - **Program Name:** (e.g., "DSCR Plus")
+    - **User's Question:** (e.g., "Wants to know max LTV for 740 FICO.")
+
+    **3. If the user has "General Question Intent" (asking an open-ended question):**
+    Your summary MUST state this intent and:
+    - **Topic:** (e.g., "User is asking for the general policy on gift funds.")
+
+    ---
+    **CURRENT SUMMARY:**
+    {conversation_summary}
+
+    ---
+    **CONVERSATION HISTORY (most recent 2 user turns and 2 AI turns):**
+    {history_text}
+
+    ---
+    **GENERATED SUMMARY (for the agent's next turn):**
+    """
+    # --- END NEW SUMMARY PROMPT ---
+
     try:
         summary_response = await llm.ainvoke(summary_prompt)
         new_summary = summary_response.content

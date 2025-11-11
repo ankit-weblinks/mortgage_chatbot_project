@@ -11,6 +11,7 @@ from db.models import (
     Lender, LoanProgram, Guideline, EligibilityMatrixRule,
     GuidelineCategory, OccupancyType, LoanPurposeType
 )
+from db.crud import get_messages_for_conversation, get_conversation_by_id
 from config.settings import settings
 
 # --- Private Helper Functions ---
@@ -190,6 +191,49 @@ async def get_available_lenders() -> str:
     )
 
     return f"Available Lenders:\n{lender_list}"
+
+
+@tool
+async def get_conversation_history(conversation_id: str, max_messages: Optional[int] = None) -> str:
+    """
+    Returns the past messages for a conversation ID in chronological order.
+
+    Args:
+        conversation_id (str): The UUID of the conversation to fetch.
+        max_messages (Optional[int]): If provided, limits the output to the most recent
+            `max_messages` messages (oldest-first for that window).
+    """
+    async with AsyncSessionFactory() as session:
+        try:
+            convo = await get_conversation_by_id(session, conversation_id)
+            if not convo:
+                return f"No conversation found with ID '{conversation_id}'."
+
+            msgs = await get_messages_for_conversation(session, conversation_id)
+
+            if not msgs:
+                return f"Conversation '{conversation_id}' has no messages."
+
+            # Optionally trim to the most recent N messages
+            if max_messages and len(msgs) > max_messages:
+                msgs = msgs[-max_messages:]
+
+            out = []
+            if convo.summary:
+                out.append(f"Conversation Summary: {convo.summary}\n")
+
+            out.append(f"Conversation ID: {conversation_id} — {len(msgs)} message(s)\n")
+
+            for m in msgs:
+                role = m.role.name if hasattr(m.role, 'name') else str(m.role)
+                # Protect long messages by truncating to a reasonable length (optional)
+                content = m.content
+                out.append(f"[{role}] {content}")
+
+            return "\n".join(out)
+
+        except Exception as e:
+            return f"Error fetching conversation history: {e}"
 
 
 @tool

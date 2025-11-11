@@ -17,6 +17,7 @@ from core.tools import (
     query_database_assistant,
     find_programs_by_scenario
 )
+from core.tools import get_conversation_history
 from core.tools1 import (
     query_document_vector_store
 )
@@ -37,6 +38,7 @@ tools = [
     find_eligibility_rules,
     query_database_assistant,
     find_programs_by_scenario,
+    get_conversation_history,
     query_document_vector_store
 ]
 
@@ -53,9 +55,13 @@ You are an expert mortgage underwriting assistant. Your goal is to provide accur
 **Conversation Summary:**
 {conversation_summary}
 
+The current conversation id is: {conversation_id}
+
 ### --- CORE DIRECTIVE: STICK TO THE ACTIVE INTENT --- ###
 
 Your most important job is to stick to the user's *active intent*. The conversation summary will tell you what this intent is.
+
+If you need more than the brief summary (for example the user asks about earlier turns, or you need to re-check exact phrasing), you may call `get_conversation_history(conversation_id, max_messages)` to retrieve the past messages for that conversation ID. Pass `max_messages` when you only need a recent window.
 
 **If the summary shows the active intent is "Scenario Intent":**
 * This means you have already identified the user wants to find a program (using `find_programs_by_scenario`) but you are **missing parameters** (like `ltv`, `occupancy`, `loan_purpose`).

@@ -53,8 +53,10 @@ async def stream_chat_message(
     full_ai_content = ""
 
     try:
+        # Provide the system prompt both the conversation summary and the conversation id
         formatted_system_prompt = system_prompt.format(
-            conversation_summary=conversation_summary
+            conversation_summary=conversation_summary,
+            conversation_id=conversation_id
         )
         messages_input = [
             SystemMessage(content=formatted_system_prompt),
